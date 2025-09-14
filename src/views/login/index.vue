@@ -31,6 +31,7 @@
 </template>
 
 <script>
+import { Message } from 'element-ui'
 export default {
   data() {
     return {
@@ -65,7 +66,10 @@ export default {
   methods: {
     async handleSignIn() {
       await this.$refs.loginForm.validate()
-      this.$store.dispatch('user/userLogin', this.formModel)
+      await this.$store.dispatch('user/userLoginAction', this.formModel)
+      Message.success('登陆成功')
+      // 后续跳转逻辑
+      this.$router.push('/')
     }
   }
 }
