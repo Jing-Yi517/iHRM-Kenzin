@@ -36,7 +36,14 @@ module.exports = {
       warnings: false,
       errors: true
     },
-    before: require('./mock/mock-server.js')
+    // 代理服务器配置， 如果检测到/api的请求，会定向至目标服务器，代理服务器发送相应请求，从而解决跨域问题
+    proxy: {
+      '/api': {
+        target: 'https://heimahr.itheima.net/', // 使用黑马的现成接口
+        changeOrigin: true
+      }
+    }
+    // before: require('./mock/mock-server.js')  模拟数据，会拦截一切请求到monk server
   },
   configureWebpack: {
     // provide the app's title in webpack's name field, so that

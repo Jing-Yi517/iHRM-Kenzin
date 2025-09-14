@@ -9,7 +9,7 @@
         </div>
       </div>
       <div class="right">
-        <h2>Sign in</h2>
+        <h2 style="cursor: default">Sign in</h2>
         <el-form ref="loginForm" :model="formModel" :rules="rules">
           <el-form-item label="Account" class="login-account" prop="account">
             <el-input v-model="formModel.account" />
@@ -65,7 +65,7 @@ export default {
   methods: {
     async handleSignIn() {
       await this.$refs.loginForm.validate()
-      console.log('登录模拟')
+      this.$store.dispatch('user/userLogin', this.formModel)
     }
   }
 }
@@ -90,7 +90,6 @@ export default {
 
     .left{
       width: 45%;
-      background-color: pink;
       background-image: url('~@/assets/common/login-background.jpg');
       background-size:cover;
       position: relative;
@@ -100,6 +99,7 @@ export default {
         font-size: 20px;
         font-weight: 800;
         color:#fff;
+        cursor: default;
         left: 2%;
         top: 2%;
       }
@@ -110,6 +110,7 @@ export default {
         width: 100%;
         margin: 150px auto;
         color:#fff;
+        cursor: default;
         .welcome{
           font-size: 22px;
           margin-bottom: 10px;
@@ -170,6 +171,7 @@ export default {
         .sign-up-btn{
           color: rgb(140, 130, 160);
           font-weight: 500;
+          cursor: pointer;
           &:hover{
             text-decoration: underline;
           }
@@ -177,6 +179,7 @@ export default {
         .change-password{
           color: rgb(140, 130, 160);
           font-weight: 500;
+          cursor: pointer;
           &:hover{
             text-decoration: underline;
           }
