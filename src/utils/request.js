@@ -2,15 +2,9 @@ import axios from 'axios'
 import store from '@/store/index'
 import { Message } from 'element-ui'
 // 环境区分
-let baseURL
-if (process.env.NODE_ENV === 'development') {
-  baseURL = '/api'
-} else if (process.env.NODE_ENV === 'production') {
-  baseURL = 'xxx生产环境xxx'
-}
 
 const service = axios.create({
-  baseURL,
+  baseURL: process.env.VUE_APP_BASE_API,
   timeout: 10 * 1000
 
 })
