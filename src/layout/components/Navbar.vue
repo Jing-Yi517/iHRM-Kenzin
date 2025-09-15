@@ -8,7 +8,7 @@
       <el-dropdown class="avatar-container" trigger="click">
         <div class="avatar-wrapper">
           <img v-if="avatar" :src="avatar" class="user-avatar">
-          <div v-else class="default-avatar">{{ username ?. charAt(0) }}</div>
+          <div v-else class="default-avatar">{{ username?.charAt(0) }}</div>
           <span class="username">{{ username }}</span>
           <i class="el-icon-setting" />
         </div>
@@ -21,7 +21,7 @@
           <a target="_blank" href="https://github.com/Jing-Yi517/iHRM-Kenzin">
             <el-dropdown-item>Github</el-dropdown-item>
           </a>
-          <a target="_blank" href="https://panjiachen.github.io/vue-element-admin-site/#/">
+          <a target="_blank" @click.prevent="handlePasswordChange">
             <el-dropdown-item>修改密码</el-dropdown-item>
           </a>
           <el-dropdown-item divided @click.native="logout">
@@ -29,6 +29,36 @@
           </el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
+
+      <!-- 修改密码弹窗 -->
+      <el-dialog
+        title="修改密码"
+        :visible.sync="passwordChangeVisible"
+        :modal-append-to-body="false"
+        width="500px"
+        @close="handleDialogClose"
+      >
+        <el-form
+          ref="passwordForm"
+          :model="passwordChangeForm"
+          label-width="120px"
+          :rules="passwordRules"
+        >
+          <el-form-item label="旧密码" prop="oldPassword">
+            <el-input v-model="passwordChangeForm.oldPassword" show-password size="small" />
+          </el-form-item>
+          <el-form-item label="新密码" prop="password">
+            <el-input v-model="passwordChangeForm.password" show-password size="small" />
+          </el-form-item>
+          <el-form-item label="确认密码" prop="rePassword">
+            <el-input v-model="passwordChangeForm.rePassword" show-password size="small" />
+          </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="handleDialogClose">取 消</el-button>
+          <el-button type="primary" @click="submitPasswordChange">确认修改</el-button>
+        </div>
+      </el-dialog>
     </div>
   </div>
 </template>
@@ -43,6 +73,50 @@ export default {
   components: {
     Breadcrumb,
     Hamburger
+  },
+  data() {
+    return {
+      passwordChangeVisible: false,
+      passwordChangeForm: {
+        password: '',
+        oldPassword: '',
+        rePassword: ''
+      },
+      passwordRules: {
+        oldPassword: [
+          {
+            validator: (rule, value, callback) => {
+              if (!value) return callback(new Error('请输入旧密码'))
+              if (value.length > 16 || value.length < 6) return callback(new Error('请输入6-16位正确格式的密码'))
+              callback()
+            },
+            trigger: 'blur'
+          }
+        ],
+        password: [
+          {
+            validator: (rule, value, callback) => {
+              if (!value) return callback(new Error('请输入新密码'))
+              if (value.length > 16 || value.length < 6) return callback(new Error('请输入6-16位正确格式的密码'))
+              if (value === this.passwordChangeForm.oldPassword) return callback(new Error('新密码不可以和旧密码一致'))
+              callback()
+            },
+            trigger: 'blur'
+          }
+        ],
+        rePassword: [
+          {
+            validator: (rule, value, callback) => {
+              if (!value) return callback(new Error('请再次输入新密码'))
+              if (value.length > 16 || value.length < 6) return callback(new Error('请输入6-16位正确格式的密码'))
+              if (value !== this.passwordChangeForm.password) return callback(new Error('前后两次密码输入不一致'))
+              callback()
+            },
+            trigger: 'blur'
+          }
+        ]
+      }
+    }
   },
   computed: {
     ...mapGetters([
@@ -59,6 +133,27 @@ export default {
       await this.$store.dispatch('user/userLogout')
       Message({ type: 'success', message: '退出登录成功' })
       this.$router.push(`/login?redirect=${this.$route.fullPath}`)
+    },
+    handlePasswordChange() {
+      this.passwordChangeVisible = true
+    },
+    submitPasswordChange() {
+      this.$refs.passwordForm.validate(async(valid) => {
+        if (!valid) return
+        try {
+          // 这里调用修改密码的接口，按需替换
+          await this.$store.dispatch('user/changePassword', this.passwordChangeForm)
+          Message.success('密码修改成功')
+          this.$refs.passwordForm.resetFields()
+          this.passwordChangeVisible = false
+        } catch (e) {
+          Message.error('密码修改失败')
+        }
+      })
+    },
+    handleDialogClose() {
+      this.$refs.passwordForm.resetFields()
+      this.passwordChangeVisible = false
     }
   }
 }
@@ -149,7 +244,6 @@ export default {
         .el-icon-setting{
           font-size: 20px;
         }
-
       }
     }
   }

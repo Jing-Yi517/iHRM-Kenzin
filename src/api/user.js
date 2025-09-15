@@ -17,3 +17,14 @@ export const userGetProfile = () => {
     method: 'get'
   })
 }
+
+export const userChangePassword = (oldPassword, newPassword) => {
+  return request({
+    url: 'sys/user/updatePass',
+    method: 'put',
+    data: {
+      oldPassword,
+      newPassword
+    }
+  })
+}
