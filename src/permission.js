@@ -18,6 +18,12 @@ router.beforeEach(async(to, from, next) => {
       next('/') // 中转到主页
       nprogress.done()
     } else {
+      if (!store.getters.userId) {
+        // 页面刷新后store刷新，里面没有数据
+        // 如果没有数据，则获取，此时如果token过期，会倒向login界面
+        await store.dispatch('user/userGetProfileAction')
+      }
+
       next() // 放行
     }
   } else {

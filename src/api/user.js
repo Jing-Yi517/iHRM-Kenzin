@@ -10,3 +10,10 @@ export const userLogin = (mobile, password) => {
     }
   })
 }
+
+export const userGetProfile = () => {
+  return request({
+    url: '/sys/profile',
+    method: 'get'
+  })
+}

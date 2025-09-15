@@ -1,5 +1,6 @@
 import axios from 'axios'
 import store from '@/store/index'
+import router from '@/router/index'
 import { Message } from 'element-ui'
 // 环境区分
 
@@ -13,7 +14,7 @@ const service = axios.create({
 service.interceptors.request.use(function(config) {
   // 在发送请求之前做些什么
   if (store.getters.token) {
-    config.headers.Authorization = `Bearer + ${store.getters.token}`
+    config.headers.Authorization = `Bearer ${store.getters.token}`
   }
   return config
 }, function(error) {
@@ -32,6 +33,13 @@ service.interceptors.response.use((response) => {
   }
 }, async(error) => {
   // error.message
+  if (error.response.status === 401) {
+    Message({ type: 'error', message: '登陆状态过期，请重新登陆' })
+    await store.dispatch('user/userLogout')
+    router.push('/login')
+    return Promise.reject(error)
+  }
+
   Message({ type: 'error', message: error.message })
   return Promise.reject(error)
 })

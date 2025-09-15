@@ -129,7 +129,7 @@ export default {
       color: #797792;
 
       /* 输入框整体 */
-      ::v-deep .el-input__inner {
+      :deep(.el-input__inner) {
         border: none;
         border-bottom: 2px solid #ccc; /* 默认浅灰色下划线 */
         border-radius: 0; /* 去掉圆角 */
@@ -141,24 +141,24 @@ export default {
       }
 
       /* hover 效果 */
-      ::v-deep .el-input__inner:hover {
+      :deep(.el-input__inner:hover) {
         border-bottom-color: #999;
       }
 
       /* focus 聚焦时 */
-      ::v-deep .el-input__inner:focus {
+      :deep(.el-input__inner:focus) {
         border-bottom: 2px solid rgb(147, 119, 203);
         outline: none;
         color: #222; /* 聚焦时字体更深 */
       }
 
       /* 错误状态下 */
-      ::v-deep(.is-error .el-input__inner) {
+      :deep(.is-error .el-input__inner) {
         border-bottom: 2px solid #f56c6c !important; /* 红色提示 */
       }
 
       /* 错误提示文字 */
-      ::v-deep(.el-form-item__error) {
+      :deep(.el-form-item__error) {
         color: #f56c6c;
         font-size: 12px;
         margin-top: 4px;
@@ -190,11 +190,11 @@ export default {
         }
       }
       .sign-in-btn{
-        ::v-deep .el-form-item__content{
+        :deep(.el-form-item__content){
           display: flex;
           justify-content: center;
         }
-        ::v-deep .el-button{
+        :deep(.el-button){
           width: 40%;
           border-radius: 20px;
           background-color: rgb(147, 119, 203);

@@ -7,23 +7,25 @@
     <div class="right-menu">
       <el-dropdown class="avatar-container" trigger="click">
         <div class="avatar-wrapper">
-          <img :src="avatar+'?imageView2/1/w/80/h/80'" class="user-avatar">
-          <i class="el-icon-caret-bottom" />
+          <img v-if="avatar" :src="avatar" class="user-avatar">
+          <div v-else class="default-avatar">{{ username ?. charAt(0) }}</div>
+          <span class="username">{{ username }}</span>
+          <i class="el-icon-setting" />
         </div>
         <el-dropdown-menu slot="dropdown" class="user-dropdown">
           <router-link to="/">
             <el-dropdown-item>
-              Home
+              首页
             </el-dropdown-item>
           </router-link>
-          <a target="_blank" href="https://github.com/PanJiaChen/vue-admin-template/">
+          <a target="_blank" href="https://github.com/Jing-Yi517/iHRM-Kenzin">
             <el-dropdown-item>Github</el-dropdown-item>
           </a>
           <a target="_blank" href="https://panjiachen.github.io/vue-element-admin-site/#/">
-            <el-dropdown-item>Docs</el-dropdown-item>
+            <el-dropdown-item>修改密码</el-dropdown-item>
           </a>
           <el-dropdown-item divided @click.native="logout">
-            <span style="display:block;">Log Out</span>
+            <span style="display:block;">退出登录</span>
           </el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
@@ -35,6 +37,7 @@
 import { mapGetters } from 'vuex'
 import Breadcrumb from '@/components/Breadcrumb'
 import Hamburger from '@/components/Hamburger'
+import { Message } from 'element-ui'
 
 export default {
   components: {
@@ -44,7 +47,8 @@ export default {
   computed: {
     ...mapGetters([
       'sidebar',
-      'avatar'
+      'avatar',
+      'username'
     ])
   },
   methods: {
@@ -52,7 +56,8 @@ export default {
       this.$store.dispatch('app/toggleSideBar')
     },
     async logout() {
-      await this.$store.dispatch('user/logout')
+      await this.$store.dispatch('user/userLogout')
+      Message({ type: 'success', message: '退出登录成功' })
       this.$router.push(`/login?redirect=${this.$route.fullPath}`)
     }
   }
@@ -117,21 +122,34 @@ export default {
       .avatar-wrapper {
         margin-top: 5px;
         position: relative;
-
+        display: flex;
+        align-items: center;
         .user-avatar {
           cursor: pointer;
-          width: 40px;
-          height: 40px;
-          border-radius: 10px;
+          width: 30px;
+          height: 30px;
+          border-radius: 50%;
+          margin-right: 10px;
+        }
+        .default-avatar{
+          width: 30px;
+          height: 30px;
+          border-radius: 50%;
+          line-height: 30px;
+          text-align: center;
+          background-color: #04c9be;
+          color:#fff;
+          margin-right: 10px;
+        }
+        .username{
+          margin-right: 10px;
+          font-size: 16px;
+          font-weight: 600;
+        }
+        .el-icon-setting{
+          font-size: 20px;
         }
 
-        .el-icon-caret-bottom {
-          cursor: pointer;
-          position: absolute;
-          right: -20px;
-          top: 25px;
-          font-size: 12px;
-        }
       }
     }
   }
