@@ -68,6 +68,7 @@ import { mapGetters } from 'vuex'
 import Breadcrumb from '@/components/Breadcrumb'
 import Hamburger from '@/components/Hamburger'
 import { Message } from 'element-ui'
+import { userChangePassword } from '@/api/user'
 
 export default {
   components: {
@@ -137,19 +138,12 @@ export default {
     handlePasswordChange() {
       this.passwordChangeVisible = true
     },
-    submitPasswordChange() {
-      this.$refs.passwordForm.validate(async(valid) => {
-        if (!valid) return
-        try {
-          // 这里调用修改密码的接口，按需替换
-          await this.$store.dispatch('user/changePassword', this.passwordChangeForm)
-          Message.success('密码修改成功')
-          this.$refs.passwordForm.resetFields()
-          this.passwordChangeVisible = false
-        } catch (e) {
-          Message.error('密码修改失败')
-        }
-      })
+    async submitPasswordChange() {
+      await this.$refs.passwordForm.validate
+      await userChangePassword(this.passwordChangeForm.oldPassword, this.passwordChangeForm.password)
+      Message.success('密码修改成功')
+      this.$refs.passwordForm.resetFields()
+      this.passwordChangeVisible = false
     },
     handleDialogClose() {
       this.$refs.passwordForm.resetFields()
