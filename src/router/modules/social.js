@@ -1,10 +1,10 @@
 import Layout from '@/layout/index.vue'
 
 export default {
-  path: '/',
+  path: '/social',
   component: Layout,
   children: [{
-    path: 'social',
+    path: '',
     name: 'Social',
     component: () => import('@/views/social/index'),
     meta: { title: '社保', icon: 'table' }

@@ -1,10 +1,10 @@
 import Layout from '@/layout/index.vue'
 
 export default {
-  path: '/',
+  path: '/salary',
   component: Layout,
   children: [{
-    path: 'salary',
+    path: '',
     name: 'Salary',
     component: () => import('@/views/salary/index'),
     meta: { title: '工资', icon: 'money' }

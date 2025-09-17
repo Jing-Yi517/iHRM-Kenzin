@@ -1,10 +1,10 @@
 import Layout from '@/layout/index.vue'
 
 export default {
-  path: '/',
+  path: '/department',
   component: Layout,
   children: [{
-    path: 'department',
+    path: '',
     name: 'Department',
     component: () => import('@/views/department/index'),
     meta: { title: '组织', icon: 'tree' }

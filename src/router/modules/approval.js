@@ -1,10 +1,10 @@
 import Layout from '@/layout/index.vue'
 
 export default {
-  path: '/',
+  path: '/approval',
   component: Layout,
   children: [{
-    path: 'approval',
+    path: '',
     name: 'Approval',
     component: () => import('@/views/approval/index'),
     meta: { title: '审批', icon: 'tree-table' }
