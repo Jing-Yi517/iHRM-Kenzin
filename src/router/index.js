@@ -1,5 +1,13 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+import departmentRouter from '@/router/modules/department'
+import approvalRouter from '@/router/modules/approval'
+import attendanceRouter from '@/router/modules/attendance'
+import employeeRouter from '@/router/modules/employee'
+import permissionRouter from '@/router/modules/permission'
+import roleRouter from '@/router/modules/role'
+import salaryRouter from '@/router/modules/salary'
+import socialRouter from '@/router/modules/social'
 
 Vue.use(Router)
 
@@ -54,6 +62,15 @@ export const constantRoutes = [
       meta: { title: 'Dashboard', icon: 'dashboard' }
     }]
   },
+
+  departmentRouter,
+  approvalRouter,
+  permissionRouter,
+  roleRouter,
+  attendanceRouter,
+  employeeRouter,
+  salaryRouter,
+  socialRouter,
 
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }
