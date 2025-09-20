@@ -1,20 +1,21 @@
 <template>
   <div class="container">
     <div class="app-container">
-      <el-tree :data="dept" :props="treeSettings" :default-expand-all="true">
+      <!-- 默认展开全部节点 + 只有点击箭头的时候才收缩/打开 -->
+      <el-tree :data="dept" :props="treeSettings" :default-expand-all="true" :expand-on-click-node="false">
         <template v-slot="{node, data}">
           <el-row style="width:100%" type="flex" align="middle" justify="space-between">
             <el-col>{{ data.name === '传智教育' ? 'xx公司':data.name }}</el-col>
             <el-col :span="4">
               <span class="dept-manager">{{ data.managerName.startsWith('黑马') ? data.managerName.slice(2) : data.managerName }}</span>
-              <el-dropdown>
+              <el-dropdown @command="handleDropdownCommand($event, data.id)">
                 <span class="el-dropdown-link">
                   操作<i class="el-icon-arrow-down el-icon--right" />
                 </span>
                 <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item>添加子部门</el-dropdown-item>
-                  <el-dropdown-item>编辑部门</el-dropdown-item>
-                  <el-dropdown-item>删除</el-dropdown-item>
+                  <el-dropdown-item command="addDepartment">添加子部门</el-dropdown-item>
+                  <el-dropdown-item command="editDepartment">编辑部门</el-dropdown-item>
+                  <el-dropdown-item command="deleteDepartment">删除</el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
             </el-col>
@@ -22,21 +23,28 @@
         </template>
       </el-tree>
     </div>
+    <TreeEditorDialog :dialog-form-visible.sync="isDialogVisible" :current-node-id="currentNodeId" @closeDialog="handleCloseDialog" @updateDepartment="getDepartmentInfo" />
   </div>
 </template>
 
 <script>
 import { getDepartmentInfo as apiGetDepartmentInfo } from '@/api/department'
 import { list2Tree } from '@/utils'
+import TreeEditorDialog from '@/views/department/components/TreeEditorDialog.vue'
 export default {
   name: 'Department',
+  components: {
+    TreeEditorDialog
+  },
   data() {
     return {
       dept: [],
       treeSettings: {
         label: 'name', // 设置显示的字段属性名
         children: 'children' // 设置子节点的属性名
-      }
+      },
+      currentNodeId: null,
+      isDialogVisible: false
     }
   },
   async created() {
@@ -46,9 +54,16 @@ export default {
     async getDepartmentInfo() {
       const res = await apiGetDepartmentInfo()
       const tree = list2Tree(res, 0)
-      console.log(tree)
       this.dept = tree
-      console.log(this.dept)
+    },
+    handleDropdownCommand(command, id) {
+      if (command === 'addDepartment' || command === 'editDepartment') {
+        this.isDialogVisible = true
+        this.currentNodeId = id
+      }
+    },
+    handleCloseDialog() {
+      this.isDialogVisible = false
     }
 
   }
