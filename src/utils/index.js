@@ -115,3 +115,42 @@ export function param2Obj(url) {
   })
   return obj
 }
+
+/**
+ *  列表数据树形转换
+ *
+ * @export
+ * @param {*} list 数据
+ * @param {number} [rootid=0] 根id
+ * @returns {{}} 返回值为转化后的树结构
+ */
+export function list2Tree(list, rootid = 0) {
+  const tree = []
+  const map = new Map()
+
+  // 先创建所有节点的映射
+  list.forEach((item) => {
+    map.set(item.id, { ...item, children: [] })
+  })
+
+  // 然后构建树结构
+  list.forEach((item) => {
+    const node = map.get(item.id)
+    if (item.pid === rootid) {
+      // 如果父ID等于根ID，则添加到树的顶层
+      tree.push(node)
+    } else {
+      // 获取父节点，确保父节点存在
+      const parent = map.get(item.pid)
+      if (parent) {
+        parent.children.push(node)
+      } else {
+        // 父节点不存在时，作为顶层节点处理或给出警告
+        console.warn(`Parent node with id ${item.pid} not found for item ${item.id}`)
+        tree.push(node)
+      }
+    }
+  })
+
+  return tree
+}

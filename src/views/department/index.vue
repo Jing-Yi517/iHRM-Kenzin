@@ -4,7 +4,7 @@
       <el-tree :data="dept" :props="treeSettings" :default-expand-all="true">
         <template v-slot="{node, data}">
           <el-row style="width:100%" type="flex" align="middle" justify="space-between">
-            <el-col>{{ data.name }}</el-col>
+            <el-col>{{ data.name === '传智教育' ? 'xx公司':data.name }}</el-col>
             <el-col :span="4">
               <span class="dept-manager">{{ data.managerName.startsWith('黑马') ? data.managerName.slice(2) : data.managerName }}</span>
               <el-dropdown>
@@ -27,6 +27,7 @@
 
 <script>
 import { getDepartmentInfo as apiGetDepartmentInfo } from '@/api/department'
+import { list2Tree } from '@/utils'
 export default {
   name: 'Department',
   data() {
@@ -44,9 +45,12 @@ export default {
   methods: {
     async getDepartmentInfo() {
       const res = await apiGetDepartmentInfo()
-      this.dept = res
+      const tree = list2Tree(res, 0)
+      console.log(tree)
+      this.dept = tree
       console.log(this.dept)
     }
+
   }
 }
 </script>
