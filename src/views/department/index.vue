@@ -28,7 +28,7 @@
 </template>
 
 <script>
-import { getDepartmentInfo as apiGetDepartmentInfo } from '@/api/department'
+import { getDepartmentInfo as apiGetDepartmentInfo, deleteDepartment } from '@/api/department'
 import { list2Tree } from '@/utils'
 import TreeEditorDialog from '@/views/department/components/TreeEditorDialog.vue'
 export default {
@@ -67,6 +67,24 @@ export default {
         this.isDialogVisible = true
         this.currentNodeId = id
         this.$refs.editDialog.getDepartmentDetail(id)
+      }
+      if (command === 'deleteDepartment') {
+        this.$confirm('即将删除你选中的节点，是否继续？', '删除部门', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(async() => {
+          try {
+            await deleteDepartment(id)
+            await this.getDepartmentInfo()
+            this.$message({
+              type: 'success',
+              message: '删除成功!'
+            })
+          } catch (err) {
+            console.warn('删除部门节点出错' + err)
+          }
+        }).catch(() => {})
       }
     },
     handleCloseDialog() {

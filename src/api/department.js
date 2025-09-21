@@ -38,3 +38,10 @@ export const updateDepartmentDetail = (formData) => {
     }
   })
 }
+
+export const deleteDepartment = (id) => {
+  return request({
+    url: `/company/department/${id}`,
+    method: 'delete'
+  })
+}
