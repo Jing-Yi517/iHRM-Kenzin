@@ -21,3 +21,20 @@ export const addDepartment = (data) => {
     data
   })
 }
+
+export const getDepartmentDetail = (id) => {
+  return request({
+    url: `/company/department/${id}`,
+    method: 'get'
+  })
+}
+
+export const updateDepartmentDetail = (formData) => {
+  return request({
+    url: `/company/department/${formData.id}`,
+    method: 'put',
+    data: {
+      ...formData
+    }
+  })
+}

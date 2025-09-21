@@ -23,7 +23,7 @@
         </template>
       </el-tree>
     </div>
-    <TreeEditorDialog :dialog-form-visible.sync="isDialogVisible" :current-node-id="currentNodeId" @closeDialog="handleCloseDialog" @updateDepartment="getDepartmentInfo" />
+    <TreeEditorDialog ref="editDialog" :dialog-form-visible.sync="isDialogVisible" :current-node-id="currentNodeId" @closeDialog="handleCloseDialog" @updateDepartment="getDepartmentInfo" />
   </div>
 </template>
 
@@ -44,7 +44,8 @@ export default {
         children: 'children' // 设置子节点的属性名
       },
       currentNodeId: null,
-      isDialogVisible: false
+      isDialogVisible: false,
+      isEditDialog: false
     }
   },
   async created() {
@@ -57,9 +58,14 @@ export default {
       this.dept = tree
     },
     handleDropdownCommand(command, id) {
-      if (command === 'addDepartment' || command === 'editDepartment') {
+      if (command === 'addDepartment') {
         this.isDialogVisible = true
         this.currentNodeId = id
+      }
+      if (command === 'editDepartment') {
+        this.isDialogVisible = true
+        this.currentNodeId = id
+        this.$refs.editDialog.getDepartmentDetail(id)
       }
     },
     handleCloseDialog() {
