@@ -35,8 +35,8 @@ import { Message } from 'element-ui'
 export default {
   data() {
     return {
-      formModel: { account: '', password: '' },
-      rules: {
+      formModel: { account: '', password: '' }, // 账号/密码 表单数据
+      rules: { // 检验规则
         account: [
           { validator: function(rule, value, callback) {
             if (!value) {

@@ -43,17 +43,18 @@ export default {
         label: 'name', // 设置显示的字段属性名
         children: 'children' // 设置子节点的属性名
       },
-      currentNodeId: null,
-      isDialogVisible: false,
-      isEditDialog: false
+      currentNodeId: null, // 当前操作节点id
+      isDialogVisible: false // 是否显示Dialog
     }
   },
   async created() {
+    // 初始化的时候，获取Department数据
     await this.getDepartmentInfo()
   },
   methods: {
     async getDepartmentInfo() {
       const res = await apiGetDepartmentInfo()
+      // 将获取的扁平化数据 转化为树
       const tree = list2Tree(res, 0)
       this.dept = tree
     },

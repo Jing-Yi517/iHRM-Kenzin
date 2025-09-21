@@ -51,7 +51,7 @@ import {
   getDepartmentDetail,
   updateDepartmentDetail
 } from '@/api/department'
-
+// 默认表单结构
 const DEFAULT_FORM = {
   code: '',
   introduce: '',
@@ -74,8 +74,8 @@ export default {
   },
   data() {
     return {
-      departmentManagerList: [],
-      formData: { ...DEFAULT_FORM },
+      departmentManagerList: [], // 管理员列表
+      formData: { ...DEFAULT_FORM }, // 表单数据
       rules: {
         name: [
           {
@@ -134,11 +134,20 @@ export default {
     this.getDepartmentManagersList()
   },
   methods: {
+    /**
+     * Dialog 关闭的时候的逻辑
+     * 重置表单： 防止表单校验错误的样式还存在
+     * 重置表单数据
+     */
     handleCloseDialog() {
       this.$emit('update:dialogFormVisible', false)
       this.$refs.form && this.$refs.form.resetFields()
       this.formData = { ...DEFAULT_FORM }
     },
+    /**
+     * 新增/编辑部门 逻辑
+     * 在这里进行了数据唯一性的检验
+     */
     async handleSubmitDialog() {
       try {
         await this.$refs.form.validate()
@@ -173,10 +182,16 @@ export default {
         console.error('提交部门时发生错误:', err)
       }
     },
+    /**
+     * 获取管理员列表
+    */
     async getDepartmentManagersList() {
       const res = await apiGetDepartmentManagersList()
       this.departmentManagerList = res
     },
+    /**
+     * 获取表单具体数据
+    */
     async getDepartmentDetail(id) {
       try {
         const res = await getDepartmentDetail(id)
