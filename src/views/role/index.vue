@@ -7,27 +7,35 @@
         :data="tableData"
         style="width: 100%"
       >
-        <el-table-column
-          prop="name"
-          label="角色"
-          width="200"
-          align="center"
-        />
-        <el-table-column prop="state" label="启用" width="200" align="center">
+        <el-table-column prop="name" label="角色" width="200" align="center">
           <template v-slot="scope">
-            <span> {{ scope.row.state === 1 ? '已启用' : '未启用' }} </span>
+            <el-input v-if="scope.row.isEdit" v-model="scope.row.editData.name" size="mini" />
+            <span v-else> {{ scope.row.name }}</span>
           </template>
         </el-table-column>
-        <el-table-column
-          prop="description"
-          label="描述"
-          align="center"
-        />
+        <el-table-column prop="state" label="启用" width="200" align="center">
+          <template v-slot="scope">
+            <el-switch v-if="scope.row.isEdit" v-model="scope.row.editData.state" size="mini" :active-value="1" :inactive-value="0" />
+            <span v-else> {{ scope.row.state === 1 ? '已启用' : '未启用' }} </span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="description" label="描述" align="center">
+          <template v-slot="scope">
+            <el-input v-if="scope.row.isEdit" v-model="scope.row.editData.description" type="textarea" :row="2" resize="none" />
+            <span v-else> {{ scope.row.description }} </span>
+          </template>
+        </el-table-column>
         <el-table-column label="操作" align="center">
           <template v-slot="scope">
-            <el-button type="text" size="small">分配权限</el-button>
-            <el-button type="text" size="small">编辑</el-button>
-            <el-button type="text" size="small">删除</el-button>
+            <template v-if="scope.row.isEdit">
+              <el-button type="primary" size="small" @click="handleSubmitEdit(scope.row)">确认</el-button>
+              <el-button size="small" @click="handleCancelEdit(scope.row)">取消</el-button>
+            </template>
+            <template v-else>
+              <el-button type="text" size="small">分配权限</el-button>
+              <el-button type="text" size="small" @click="scope.row.isEdit = true">编辑</el-button>
+              <el-button type="text" size="small">删除</el-button>
+            </template>
           </template>
         </el-table-column>
       </el-table>
@@ -50,9 +58,11 @@
           <el-form-item prop="name" label="角色名称">
             <el-input v-model="formData.name" style="width: 300px" size="mini" />
           </el-form-item>
-          <el-form-item label="启用">
+          <el-form-item label="启用" prop="state">
             <el-switch
               v-model="formData.state"
+              :active-value="1"
+              :inactive-value="0"
             />
           </el-form-item>
           <el-form-item label="角色描述" prop="description">
@@ -73,7 +83,7 @@
 </template>
 
 <script>
-import { addRole, getRoleList } from '@/api/role'
+import { addRole, getRoleList, updateRole } from '@/api/role'
 export default {
   name: 'Role',
   data() {
@@ -88,7 +98,7 @@ export default {
       isDialogVisible: false,
       formData: {
         name: '',
-        state: false,
+        state: 0,
         description: ''
       },
       rules: {
@@ -101,6 +111,7 @@ export default {
             }
           }
         ],
+        state: [],
         description:
         [
           {
@@ -118,35 +129,96 @@ export default {
   },
   methods: {
     /**
-     *
+     * ? 分页数据获取逻辑
      * @param params 分页数据对象
      * ! 如果没传入对象 则默认传入空对象
      * * 如果传入了对象，则为其进行结构， 如果没传相关的属性，则用默认值
      */
     async getRoleList({ page = this.pagination.page, pagesize = this.pagination.pagesize } = {}) {
       this.isTableLoading = true
+
       const res = await getRoleList({ page, pagesize })
+      res.rows.forEach((item) => { // 为其添加响应式数据，为了能侦测属性的变化后页面重新渲染
+        this.$set(item, 'editData', { ...item }) // 先拷贝，防止拷贝上isEdit字段
+        this.$set(item, 'isEdit', false)
+      })
+
       this.pagination.total = res.total
       this.tableData = res.rows
+
       this.isTableLoading = false
     },
+    /**
+     * ? 页码改变后处理逻辑
+     * @param page 当前页码
+     * * 将变化后的页码传入 getRoleList 函数，获取最新的数据
+     */
     async handlePageChange(page) {
       this.pagination.page = page
       await this.getRoleList({ page })
     },
+
+    /**
+     * 关闭新增角色对话框逻辑
+     */
     handleCloseDialog() {
       this.$refs.form.resetFields()
       this.isDialogVisible = false
     },
+
+    /**
+     * ? 新增提交角色逻辑
+     * * 调用新增接口，并获取最新数据
+     */
     async handleSubmitDialog() {
       try {
         await this.$refs.form.validate()
         await addRole(this.formData)
         this.$message({ type: 'success', message: '添加角色成功' })
-        this.getRoleList()
+        await this.getRoleList()
         this.handleCloseDialog()
       } catch (err) {
         console.warn('添加新角色错误' + err)
+      }
+    },
+
+    /**
+     * ? 退出编辑模式逻辑
+     * @param row 当前行数据
+     * * 从row里面获取相应的数据，赋值给editData内，取消编辑的操作
+     * * 退出Edit模式
+     */
+    handleCancelEdit(row) {
+      const { name, state, description, id } = row
+      row.editData = { name, state, description, id }
+      row.isEdit = false
+    },
+    /**
+     * ? 提交编辑逻辑
+     * @param row 当前行数据
+     * * 检验表单项是否填入，否则抛出错误
+     * * 将 editData 里面的相应数据赋值给 row
+     * ! 错误处理： 如果为空 / 其他错误 给出提示
+     */
+    async handleSubmitEdit(row) {
+      try {
+        if (row.editData.name && row.editData.description) {
+          await updateRole(row.editData)
+          this.$message({ type: 'success', message: '修改角色成功' })
+          const { name, description, state } = row.editData
+          /* eslint-disable require-atomic-updates */
+          row.name = name
+          row.description = description
+          row.state = state
+          row.isEdit = false
+          /* eslint-disable require-atomic-updates */
+        } else throw new Error('Empty Form')
+      } catch (err) {
+        if (err.message === 'Empty Form') {
+          this.$message.error('角色名称和描述为必填项')
+        } else {
+          this.$message.error(err.message || '修改角色失败')
+        }
       }
     }
   }

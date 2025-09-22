@@ -56,8 +56,7 @@ const DEFAULT_FORM = {
   code: '',
   introduce: '',
   managerId: '',
-  name: '',
-  pid: ''
+  name: ''
 }
 
 export default {

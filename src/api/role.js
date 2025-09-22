@@ -15,3 +15,11 @@ export const addRole = (data) => {
     data
   })
 }
+
+export const updateRole = (data) => {
+  return request({
+    url: `/sys/role/${data.id}`,
+    method: 'put',
+    data
+  })
+}
