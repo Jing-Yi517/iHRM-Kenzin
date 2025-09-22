@@ -34,7 +34,7 @@
             <template v-else>
               <el-button type="text" size="small">分配权限</el-button>
               <el-button type="text" size="small" @click="scope.row.isEdit = true">编辑</el-button>
-              <el-button type="text" size="small">删除</el-button>
+              <el-button type="text" size="small" @click="handleDeleteRole(scope.row)">删除</el-button>
             </template>
           </template>
         </el-table-column>
@@ -83,7 +83,7 @@
 </template>
 
 <script>
-import { addRole, getRoleList, updateRole } from '@/api/role'
+import { addRole, getRoleList, updateRole, deleteRole } from '@/api/role'
 export default {
   name: 'Role',
   data() {
@@ -139,7 +139,11 @@ export default {
 
       const res = await getRoleList({ page, pagesize })
       res.rows.forEach((item) => { // 为其添加响应式数据，为了能侦测属性的变化后页面重新渲染
-        this.$set(item, 'editData', { ...item }) // 先拷贝，防止拷贝上isEdit字段
+        this.$set(item, 'editData', {
+          name: item.name,
+          state: item.state,
+          description: item.description
+        }) // 先拷贝，防止拷贝上isEdit字段
         this.$set(item, 'isEdit', false)
       })
 
@@ -159,7 +163,7 @@ export default {
     },
 
     /**
-     * 关闭新增角色对话框逻辑
+     * ? 关闭新增角色对话框逻辑
      */
     handleCloseDialog() {
       this.$refs.form.resetFields()
@@ -189,10 +193,11 @@ export default {
      * * 退出Edit模式
      */
     handleCancelEdit(row) {
-      const { name, state, description, id } = row
-      row.editData = { name, state, description, id }
+      const { name, state, description } = row
+      row.editData = { name, state, description }
       row.isEdit = false
     },
+
     /**
      * ? 提交编辑逻辑
      * @param row 当前行数据
@@ -203,7 +208,7 @@ export default {
     async handleSubmitEdit(row) {
       try {
         if (row.editData.name && row.editData.description) {
-          await updateRole(row.editData)
+          await updateRole({ ...row.editData, id: row.id })
           this.$message({ type: 'success', message: '修改角色成功' })
           const { name, description, state } = row.editData
           /* eslint-disable require-atomic-updates */
@@ -220,7 +225,33 @@ export default {
           this.$message.error(err.message || '修改角色失败')
         }
       }
+    },
+    /**
+     * ? 删除角色逻辑
+     * @param row 当前行数据
+     * * 调用接口删除角色数据
+     * * 判断当前分页的数据是否只有一条，且是不是位于第一页。 如果只有一条且不位于第一页，当前页码减一
+     */
+    handleDeleteRole(row) {
+      this.$confirm('此操作将永久删除该角色, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(async() => {
+        try {
+          await deleteRole({ id: row.id })
+          this.$message({
+            type: 'success',
+            message: '删除成功!'
+          })
+          if (this.tableData.length === 1 && this.pagination.page > 1) this.pagination.page--
+          await this.getRoleList()
+        } catch (error) {
+          this.$message({ type: 'error', message: error.message })
+        }
+      }).catch(() => {})
     }
+
   }
 }
 </script>

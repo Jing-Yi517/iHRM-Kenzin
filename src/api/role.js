@@ -23,3 +23,11 @@ export const updateRole = (data) => {
     data
   })
 }
+
+export const deleteRole = (data) => {
+  return request({
+    url: `/sys/role/${data.id}`,
+    method: 'delete',
+    data
+  })
+}
