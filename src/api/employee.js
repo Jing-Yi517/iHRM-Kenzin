@@ -49,3 +49,18 @@ export const addEmployee = (data) => {
     data
   })
 }
+
+export const getEmployeeDetail = (id) => {
+  return request({
+    url: `/sys/user/${id}`,
+    method: 'get'
+  })
+}
+
+export const updateEmployee = (data) => {
+  return request({
+    url: `/sys/user/${data.id}`,
+    method: 'put',
+    data
+  })
+}

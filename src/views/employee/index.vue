@@ -46,7 +46,7 @@
             <el-table-column label="入职时间" sortable prop="timeOfEntry" />
             <el-table-column label="操作" width="280px">
               <template v-slot="scope">
-                <el-button size="mini" type="text">查看</el-button>
+                <el-button size="mini" type="text" @click="handleCheckEmployee(scope.row)">查看</el-button>
                 <el-button size="mini" type="text">角色</el-button>
                 <el-popconfirm
                   title="确定要删除当前的员工吗?"
@@ -198,6 +198,9 @@ export default {
     },
     handleAddEmployee() {
       this.$router.push('/employee/detail')
+    },
+    handleCheckEmployee(row) {
+      this.$router.push(`/employee/detail/${row.id}`)
     }
 
   }

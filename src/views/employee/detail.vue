@@ -95,7 +95,7 @@
 
 <script>
 import DepartmenCascader from '@/views/employee/components/DepartmenCascader.vue'
-import { addEmployee } from '@/api/employee'
+import { addEmployee, getEmployeeDetail, updateEmployee } from '@/api/employee'
 export default {
   name: 'EmployeeDetail',
   components: { DepartmenCascader },
@@ -148,6 +148,11 @@ export default {
       }
     }
   },
+  async created() {
+    if (this.$route.params.id) {
+      this.formModel = await getEmployeeDetail(this.$route.params.id)
+    }
+  },
   methods: {
     validateCorrectionTime() {
       if (this.formModel.timeOfEntry && this.formModel.correctionTime) {
@@ -160,8 +165,6 @@ export default {
     },
 
     async handleSaveEmployee() {
-      console.log('点击开始')
-
       try {
         if (!this.validateCorrectionTime()) {
           return
@@ -172,9 +175,15 @@ export default {
         if (!valid) {
           return
         }
-        await addEmployee({ ...this.formModel })
-        // 添加成功提示
-        this.$message.success('员工添加成功')
+
+        if (!this.$route.params.id) {
+          await addEmployee({ ...this.formModel })
+          // 添加成功提示
+          this.$message.success('员工添加成功')
+        } else {
+          await updateEmployee({ ...this.formModel })
+          this.$message.success('员工修改成功')
+        }
       } catch (error) {
         this.$message.error('操作失败：' + (error.message || '未知错误'))
       }
