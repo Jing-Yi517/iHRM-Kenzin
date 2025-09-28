@@ -233,7 +233,7 @@ export default {
      * * 判断当前分页的数据是否只有一条，且是不是位于第一页。 如果只有一条且不位于第一页，当前页码减一
      */
     handleDeleteRole(row) {
-      this.$confirm('此操作将永久删除该角色, 是否继续?', '提示', {
+      this.$confirm(`此操作将永久删除 ${row.name} 角色, 是否继续?`, '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'

@@ -6,7 +6,7 @@ import { Message } from 'element-ui'
 
 const service = axios.create({
   baseURL: process.env.VUE_APP_BASE_API,
-  timeout: 10 * 1000
+  timeout: 20 * 1000
 
 })
 
@@ -24,6 +24,7 @@ service.interceptors.request.use(function(config) {
 
 // 响应拦截器
 service.interceptors.response.use((response) => {
+  if (response.data instanceof Blob) return response.data // 返回了Blob对象
   const { data, message, success } = response.data // 默认json格式
   if (success) {
     return data
