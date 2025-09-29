@@ -27,11 +27,20 @@ export default {
     }
   },
   methods: {
+    /**
+     * ? 用于判断文件类型
+     * @param type 文件类型
+     */
     isPicture(type) {
       const pics = ['image/jpeg', 'image/png', 'image/gif', 'image/bmp']
       if (pics.includes(type)) return true
       return false
     },
+
+    /**
+     * ? 上传前判断文件大小和文件类型是否符合标准
+     * @param file 文件对象
+     */
     handleAvatarChange(file) {
       console.log(file)
       if (this.isPicture(file.type) && file.size / 1024 / 1024 < 5) {
@@ -39,6 +48,13 @@ export default {
       }
       return false
     },
+
+    /**
+     *
+     * @param params 文件对象
+     * ! 注意： 下面的密匙和密钥需要自己去配置腾讯云的对象存储
+     * ! 下面的存储桶已经删除，该功能暂不可用
+     */
     handleUploadImage(params) {
       const cos = new COS({
         SecretId: 'AKID1ub4JL9kHcjcHiv67uTyNk281A81oaO4', // 密匙

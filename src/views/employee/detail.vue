@@ -105,14 +105,14 @@ export default {
   data() {
     return {
       formModel: {
-        username: '',
-        mobile: '',
-        departmentId: 2,
-        workNumber: '',
-        correctionTime: '',
-        formOfEmployment: '',
-        timeOfEntry: '',
-        staffPhoto: ''
+        username: '', // 员工名称
+        mobile: '', // 手机号码
+        departmentId: 2, // 部门编号
+        workNumber: '', // 工号（自动生成）
+        correctionTime: '', // 转正时间
+        formOfEmployment: '', // 聘用方式
+        timeOfEntry: '', // 入职时间
+        staffPhoto: '' // 员工头像
       },
       rules: {
         username: [
@@ -154,10 +154,14 @@ export default {
   },
   async created() {
     if (this.$route.params.id) {
-      this.formModel = await getEmployeeDetail(this.$route.params.id)
+      this.formModel = await getEmployeeDetail(this.$route.params.id) // 如果存在id（编辑模式），则以id请求用户数据渲染
     }
   },
   methods: {
+    /**
+     * ? 入职时间和转正时间的表单验证
+     * * 单独提取出来的目的： 保证this指向的正确性
+     */
     validateCorrectionTime() {
       if (this.formModel.timeOfEntry && this.formModel.correctionTime) {
         if (new Date(this.formModel.timeOfEntry) > new Date(this.formModel.correctionTime)) {
@@ -168,6 +172,10 @@ export default {
       return true
     },
 
+    /**
+     * ? 保存员工数据
+     * * 该函数利用路由中是否含有id params进行新增和编辑逻辑的区分。 以调用不同的接口
+     */
     async handleSaveEmployee() {
       try {
         if (!this.validateCorrectionTime()) {

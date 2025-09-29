@@ -84,8 +84,8 @@ export default {
   components: { ExcelImportDialog },
   data() {
     return {
-      dept: [],
-      employee: [],
+      dept: [], // 树结构数据
+      employee: [], // table员工数据
       treeSettings: {
         label: 'name', // 设置显示的字段属性名
         children: 'children' // 设置子节点的属性名
@@ -96,15 +96,15 @@ export default {
         page: 1,
         keyword: ''
       },
-      total: 0,
-      isTableLoading: false,
-      timer: '',
-      isDialogVisible: false
+      total: 0, // 分页数据
+      isTableLoading: false, // 表格是否正在加载
+      timer: '', // 计时器，用于模糊查询防抖
+      isDialogVisible: false // 是否打开excel相关功能对话框
     }
   },
   async created() {
-    await this.getInitTree()
-    await this.getCurrentEmployee()
+    await this.getInitTree() // 初始化树形数据
+    await this.getCurrentEmployee() // 获取表格数据
   },
   methods: {
     /**
@@ -166,7 +166,10 @@ export default {
         this.getCurrentEmployee()
       }, 300)
     },
-
+    /**
+     * ? 导出Excel按钮逻辑
+     * ! 注意： 该接口调用速度较慢，请注意request超时时间的设置
+     */
     async handleExportExcel() {
       const loading = this.$loading({
         lock: true,
@@ -184,6 +187,11 @@ export default {
 
       loading.close()
     },
+
+    /**
+     * ? 用户删除逻辑
+     * @param id 员工id
+     */
     async handleConfirmDelete(id) {
       try {
         await deleteEmployee(id)
@@ -196,9 +204,18 @@ export default {
         console.log(err)
       }
     },
+
+    /**
+     * ? 跳转员工详情界面（新增逻辑）
+     */
     handleAddEmployee() {
       this.$router.push('/employee/detail')
     },
+
+    /**
+     * ? 跳转员工详情界面（编辑模式）
+     * @param row 员工行数据
+     */
     handleCheckEmployee(row) {
       this.$router.push(`/employee/detail/${row.id}`)
     }
