@@ -76,7 +76,9 @@
 
         <el-row>
           <el-col :span="12" :offset="2">
-            <el-form-item label="员工头像" />
+            <el-form-item label="员工头像">
+              <EmployeeAvatar v-model="formModel.staffPhoto" />
+            </el-form-item>
           </el-col>
         </el-row>
 
@@ -95,10 +97,11 @@
 
 <script>
 import DepartmenCascader from '@/views/employee/components/DepartmenCascader.vue'
+import EmployeeAvatar from '@/views/employee/components/EmployeeAvatar.vue'
 import { addEmployee, getEmployeeDetail, updateEmployee } from '@/api/employee'
 export default {
   name: 'EmployeeDetail',
-  components: { DepartmenCascader },
+  components: { DepartmenCascader, EmployeeAvatar },
   data() {
     return {
       formModel: {
@@ -108,7 +111,8 @@ export default {
         workNumber: '',
         correctionTime: '',
         formOfEmployment: '',
-        timeOfEntry: ''
+        timeOfEntry: '',
+        staffPhoto: ''
       },
       rules: {
         username: [
@@ -184,6 +188,7 @@ export default {
           await updateEmployee({ ...this.formModel })
           this.$message.success('员工修改成功')
         }
+        this.$router.push('/employee')
       } catch (error) {
         this.$message.error('操作失败：' + (error.message || '未知错误'))
       }
