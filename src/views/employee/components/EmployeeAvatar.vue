@@ -53,15 +53,15 @@ export default {
      *
      * @param params 文件对象
      * ! 注意： 下面的密匙和密钥需要自己去配置腾讯云的对象存储
-     * ! 下面的存储桶已经删除，该功能暂不可用
+     * ! 下面的存储桶以及密钥密匙已经删除，该功能暂不可用
      */
     handleUploadImage(params) {
       const cos = new COS({
-        SecretId: 'AKID1ub4JL9kHcjcHiv67uTyNk281A81oaO4', // 密匙
-        SecretKey: 'Voyuc6NRHxY3WvAC1d2DAtNdhYDhx0ui'// 密钥
+        SecretId: '', // 密匙
+        SecretKey: ''// 密钥
       })
       cos.putObject({
-        Bucket: 'ihrm-1380999860', // 存储桶名称
+        Bucket: 'ihrm', // 存储桶名称
         Region: 'ap-chongqing', // 地域名称
         Key: params.file.name, // 文件名
         StorageClass: 'STANDARD',
