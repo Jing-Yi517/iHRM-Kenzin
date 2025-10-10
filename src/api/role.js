@@ -1,5 +1,10 @@
 import request from '@/utils/request'
 
+/**
+ * ? 获取角色列表
+ * @param {*} params 分页数据
+ * @returns
+ */
 export const getRoleList = (params) => {
   return request({
     url: '/sys/role',
@@ -8,6 +13,11 @@ export const getRoleList = (params) => {
   })
 }
 
+/**
+ * ? 添加角色逻辑
+ * @param {*} data 角色表单数据
+ * @returns
+ */
 export const addRole = (data) => {
   return request({
     url: '/sys/role',
@@ -16,6 +26,11 @@ export const addRole = (data) => {
   })
 }
 
+/**
+ * ? 更新角色数据
+ * @param {*} data 角色表单数据
+ * @returns
+ */
 export const updateRole = (data) => {
   return request({
     url: `/sys/role/${data.id}`,
@@ -24,6 +39,11 @@ export const updateRole = (data) => {
   })
 }
 
+/**
+ * ? 删除角色逻辑
+ * @param {*} data 角色id
+ * @returns
+ */
 export const deleteRole = (data) => {
   return request({
     url: `/sys/role/${data.id}`,
