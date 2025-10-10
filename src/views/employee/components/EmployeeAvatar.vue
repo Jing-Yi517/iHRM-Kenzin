@@ -42,7 +42,6 @@ export default {
      * @param file 文件对象
      */
     handleAvatarChange(file) {
-      console.log(file)
       if (this.isPicture(file.type) && file.size / 1024 / 1024 < 5) {
         return true
       }
