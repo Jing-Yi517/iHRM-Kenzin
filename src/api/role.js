@@ -69,3 +69,10 @@ export const assignRole = (id, roleIds) => {
     }
   })
 }
+
+export const getRoleDetails = (id) => {
+  return request({
+    url: `/sys/role/${id}`,
+    method: 'get'
+  })
+}

@@ -32,7 +32,7 @@
               <el-button size="small" @click="handleCancelEdit(scope.row)">取消</el-button>
             </template>
             <template v-else>
-              <el-button type="text" size="small">分配权限</el-button>
+              <el-button type="text" size="small" @click="handleAssignPermission(scope.row)">分配权限</el-button>
               <el-button type="text" size="small" @click="scope.row.isEdit = true">编辑</el-button>
               <el-button type="text" size="small" @click="handleDeleteRole(scope.row)">删除</el-button>
             </template>
@@ -78,14 +78,17 @@
           </el-form-item>
         </el-form>
       </el-dialog>
+      <AssignPermissionDialog :is-dialog-visible.sync="isAssignDialogVisible" :current-row="currentRow" :current-role-details="currentRoleDetails" />
     </div>
   </div>
 </template>
 
 <script>
-import { addRole, getRoleList, updateRole, deleteRole } from '@/api/role'
+import { addRole, getRoleList, updateRole, deleteRole, getRoleDetails } from '@/api/role'
+import AssignPermissionDialog from '@/views/role/components/AssignPermissionDialog.vue'
 export default {
   name: 'Role',
+  components: { AssignPermissionDialog },
   data() {
     return {
       pagination: {
@@ -95,7 +98,10 @@ export default {
       },
       tableData: [],
       isTableLoading: false,
-      isDialogVisible: false,
+      isDialogVisible: false, // 角色编辑dialog
+      isAssignDialogVisible: false,
+      currentRow: {},
+      currentRoleDetails: {},
       formData: {
         name: '',
         state: 0,
@@ -250,6 +256,15 @@ export default {
           this.$message({ type: 'error', message: error.message })
         }
       }).catch(() => {})
+    },
+
+    async handleAssignPermission(row) {
+      const res = await getRoleDetails(row.id)
+
+      this.currentRoleDetails = res
+      this.currentRow = row
+
+      this.isAssignDialogVisible = true
     }
 
   }

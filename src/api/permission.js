@@ -60,3 +60,14 @@ export const updatePermissionNode = (data) => {
     data
   })
 }
+
+export const assignPermisson = (id, permIds) => {
+  return request({
+    url: '/sys/role/assignPrem',
+    method: 'put',
+    data: {
+      id,
+      permIds
+    }
+  })
+}
