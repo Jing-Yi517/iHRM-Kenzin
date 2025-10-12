@@ -51,3 +51,21 @@ export const deleteRole = (data) => {
     data
   })
 }
+
+export const getEnabledRoleList = () => {
+  return request({
+    url: '/sys/role/list/enabled',
+    method: 'get'
+  })
+}
+
+export const assignRole = (id, roleIds) => {
+  return request({
+    url: '/sys/user/assignRoles',
+    method: 'put',
+    data: {
+      id,
+      roleIds
+    }
+  })
+}

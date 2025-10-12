@@ -17,7 +17,7 @@
       <div class="right">
         <el-row type="flex" justify="end" class="employee-operation-btn">
           <el-button type="primary" @click="handleAddEmployee">添加员工</el-button>
-          <el-button @click="isDialogVisible=true">导入Excel</el-button>
+          <el-button @click="isExcelDialogVisible=true">导入Excel</el-button>
           <el-button @click="handleExportExcel">导出Excel</el-button>
         </el-row>
         <el-row>
@@ -47,7 +47,7 @@
             <el-table-column label="操作" width="280px">
               <template v-slot="scope">
                 <el-button size="mini" type="text" @click="handleCheckEmployee(scope.row)">查看</el-button>
-                <el-button size="mini" type="text">角色</el-button>
+                <el-button size="mini" type="text" @click="handleAssignRole(scope.row)">角色</el-button>
                 <el-popconfirm
                   title="确定要删除当前的员工吗?"
                   trigger="click"
@@ -69,19 +69,21 @@
         </el-row>
       </div>
     </div>
-    <ExcelImportDialog :is-dialog-visible.sync="isDialogVisible" @upload-success="getCurrentEmployee()" />
+    <ExcelImportDialog :is-dialog-visible.sync="isExcelDialogVisible" @upload-success="getCurrentEmployee()" />
+    <RoleAssignmentDialog :is-dialog-visible.sync="isRoleDialogVisible" :current-role-ids="currentRoleIds" :current-row="currentRow" />
   </div>
 </template>
 
 <script>
 import { getDepartmentInfo } from '@/api/department'
-import { getEmployeeList, exportEmployeeExcel, deleteEmployee } from '@/api/employee'
+import { getEmployeeList, exportEmployeeExcel, deleteEmployee, getEmployeeDetail } from '@/api/employee'
 import { list2Tree } from '@/utils'
 import ExcelImportDialog from '@/views/employee/components/ExcelImportDialog.vue'
+import RoleAssignmentDialog from '@/views/employee/components/RoleAssignmentDialog.vue'
 import FileSaver from 'file-saver'
 export default {
   name: 'Employee',
-  components: { ExcelImportDialog },
+  components: { ExcelImportDialog, RoleAssignmentDialog },
   data() {
     return {
       dept: [], // 树结构数据
@@ -99,7 +101,10 @@ export default {
       total: 0, // 分页数据
       isTableLoading: false, // 表格是否正在加载
       timer: '', // 计时器，用于模糊查询防抖
-      isDialogVisible: false // 是否打开excel相关功能对话框
+      isExcelDialogVisible: false, // 是否打开excel相关功能对话框
+      isRoleDialogVisible: false, // 是否打开角色编辑框
+      currentRoleIds: [],
+      currentRow: {}
     }
   },
   async created() {
@@ -218,6 +223,13 @@ export default {
      */
     handleCheckEmployee(row) {
       this.$router.push(`/employee/detail/${row.id}`)
+    },
+
+    async handleAssignRole(row) {
+      const details = await getEmployeeDetail(row.id)
+      this.currentRow = row
+      this.currentRoleIds = details.roleIds
+      this.isRoleDialogVisible = true
     }
 
   }

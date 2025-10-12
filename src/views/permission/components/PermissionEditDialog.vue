@@ -8,7 +8,7 @@
         <el-input v-model="formData.code" autocomplete="off" class="form-item" />
       </el-form-item>
       <el-form-item label="权限描述" prop="description">
-        <el-input v-model="formData.description" autocomplete="off" class="form-item" type="textarea" :autosize="{minRows: 2, maxRows: 4}" />
+        <el-input v-model="formData.description" autocomplete="off" class="form-item" type="textarea" resize="none" />
       </el-form-item>
       <el-form-item label="开启" prop="enVisible">
         <el-switch v-model="formData.enVisible" :active-value="1" :inactive-value="0" />
