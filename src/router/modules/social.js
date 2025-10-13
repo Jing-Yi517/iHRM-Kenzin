@@ -2,6 +2,7 @@ import Layout from '@/layout/index.vue'
 
 export default {
   path: '/social',
+  name: 'social',
   component: Layout,
   children: [{
     path: '',

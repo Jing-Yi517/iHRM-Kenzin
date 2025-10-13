@@ -2,6 +2,7 @@ import Layout from '@/layout/index.vue'
 
 export default {
   path: '/approval',
+  name: 'approval',
   component: Layout,
   children: [{
     path: '',

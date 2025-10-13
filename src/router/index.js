@@ -61,8 +61,14 @@ export const constantRoutes = [
       component: () => import('@/views/dashboard/index'),
       meta: { title: 'Dashboard', icon: 'dashboard' }
     }]
-  },
+  }
+  // 404 page must be placed at the end !!!
+  // { path: '*', redirect: '/404', hidden: true }
+  // 此处删除了 404 的静态路由，转为在路由前置守卫里面添加： 因此404必须置于最后，因此要在添加完动态路由后再加入404
+]
 
+// 动态路由 ： 路由不固定，需要权限来区分
+export const asyncRoutes = [
   departmentRouter,
   approvalRouter,
   permissionRouter,
@@ -70,16 +76,12 @@ export const constantRoutes = [
   attendanceRouter,
   employeeRouter,
   salaryRouter,
-  socialRouter,
-
-  // 404 page must be placed at the end !!!
-  { path: '*', redirect: '/404', hidden: true }
+  socialRouter
 ]
-
 const createRouter = () => new Router({
   // mode: 'history', // require service support
   scrollBehavior: () => ({ y: 0 }),
-  routes: constantRoutes
+  routes: constantRoutes // 引入静态路由
 })
 
 const router = createRouter()

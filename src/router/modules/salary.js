@@ -2,6 +2,7 @@ import Layout from '@/layout/index.vue'
 
 export default {
   path: '/salary',
+  name: 'salary',
   component: Layout,
   children: [{
     path: '',
