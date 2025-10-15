@@ -35,6 +35,20 @@ Vue.use(ElementUI)
 
 Vue.config.productionTip = false
 
+// 自定义指令 v-permission 用来控制操作权
+Vue.directive('permission', {
+  // 会在指令作用的元素插入到页面完成以后触发
+  inserted(el, binding) {
+    const points = store.state.user.userProfile?.roles?.points || [] // 当前用户信息的操作权 ?. 可选链，如果中途没有就返回undefined而不是报错
+    if (!points.includes(binding.value)) {
+      // 不存在就要删除或者禁用
+      // el.remove() // 删除元素
+      el.disabled = true
+    }
+  }
+
+})
+
 new Vue({
   el: '#app',
   router,

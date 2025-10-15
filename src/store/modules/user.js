@@ -21,7 +21,7 @@ const mutations = {
     state.userProfile = {}
   },
   setRoutes(state, newRoutes) {
-    state.routes = [...state.routes, ...newRoutes]
+    state.routes = [...constantRoutes, ...newRoutes] // 静态路由 + 动态路由
   }
 }
 const actions = {

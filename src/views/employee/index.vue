@@ -16,7 +16,7 @@
       </div>
       <div class="right">
         <el-row type="flex" justify="end" class="employee-operation-btn">
-          <el-button type="primary" @click="handleAddEmployee">添加员工</el-button>
+          <el-button v-permission="'add-employee'" type="primary" @click="handleAddEmployee">添加员工</el-button>
           <el-button @click="isExcelDialogVisible=true">导入Excel</el-button>
           <el-button @click="handleExportExcel">导出Excel</el-button>
         </el-row>

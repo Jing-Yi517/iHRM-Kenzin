@@ -1,14 +1,17 @@
 <template>
   <el-dialog :visible="isDialogVisible" title="分配权限" @close="handleDialogClose">
-    <!-- 弹层内容 -->
-    <!-- checkbox -->
-    <el-checkbox-group v-model="permIds">
-      <el-checkbox
-        v-for="item in enabledPermList"
-        :key="item.id"
-        :label="item.id"
-      >{{ item.name }}</el-checkbox>
-    </el-checkbox-group>
+    <el-tree
+      ref="permTree"
+      :data="enabledPermList"
+      node-key="id"
+      show-checkbox
+      check-strictly
+      default-expand-all
+      highlight-current
+      :props="{ label: 'name', children: 'children' }"
+      :default-checked-keys="permIds"
+    />
+
     <el-row type="flex" justify="center" style="margin-top: 20px;">
       <el-col :span="6">
         <el-button type="primary" @click="handleAssignPermission">分配</el-button>
@@ -19,8 +22,9 @@
 </template>
 
 <script>
-import { getPermissionList } from '@/api/permission'
-import { assignPermisson } from '@/api/permission'
+import { getPermissionList, assignPermisson } from '@/api/permission'
+import { list2Tree } from '@/utils'
+
 export default {
   props: {
     isDialogVisible: {
@@ -38,20 +42,24 @@ export default {
   },
   data() {
     return {
-      permIds: [],
-      enabledPermList: []
+      permIds: [], // 当前角色已有权限
+      enabledPermList: [] // 树形权限数据
     }
   },
   watch: {
-    isDialogVisible: function(newVal, oldVal) {
+    isDialogVisible(newVal) {
       if (newVal) {
         this.permIds = this.currentRoleDetails.permIds
+        // 弹窗打开后更新选中状态
+        this.$nextTick(() => {
+          this.$refs.permTree.setCheckedKeys(this.permIds)
+        })
       }
     }
   },
   async created() {
     const res = await getPermissionList()
-    this.enabledPermList = res
+    this.enabledPermList = list2Tree(res) // 转换成树结构
   },
   methods: {
     handleDialogClose() {
@@ -59,7 +67,12 @@ export default {
     },
     async handleAssignPermission() {
       try {
-        await assignPermisson(this.currentRow.id, this.permIds)
+        //  获取所有选中节点（包括半选中父节点）
+        const checkedKeys = this.$refs.permTree.getCheckedKeys()
+        const halfCheckedKeys = this.$refs.permTree.getHalfCheckedKeys()
+        const allSelected = [...checkedKeys, ...halfCheckedKeys]
+
+        await assignPermisson(this.currentRow.id, allSelected)
         this.$message({
           type: 'success',
           message: '分配权限成功'
@@ -72,5 +85,3 @@ export default {
   }
 }
 </script>
-
-<style></style>
