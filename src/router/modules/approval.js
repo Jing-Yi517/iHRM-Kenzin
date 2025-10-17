@@ -4,10 +4,20 @@ export default {
   path: '/approval',
   name: 'approval',
   component: Layout,
-  children: [{
-    path: '',
-    name: 'Approval',
-    component: () => import('@/views/approval/index'),
-    meta: { title: '审批', icon: 'tree-table' }
-  }]
+  children: [
+    {
+      path: '',
+      name: 'Approval',
+      component: () => import('@/views/approval/index'),
+      meta: { title: '审批', icon: 'tree-table' }
+    },
+    {
+      path: `/approval/detail/:id?`,
+      component: () => import('@/views/approval/detail'),
+      hidden: true,
+      meta: {
+        title: '审批详情'
+      }
+    }
+  ]
 }
