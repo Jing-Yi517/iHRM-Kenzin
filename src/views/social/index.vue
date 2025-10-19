@@ -119,7 +119,7 @@ export default {
       await this.getSocialList()
     },
     handleTableRowClick(row) {
-      console.log('点击了' + row)
+      this.$router.push(`/social/detail/${row.id}`)
     }
   }
 }

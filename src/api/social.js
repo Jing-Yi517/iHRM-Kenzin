@@ -14,3 +14,10 @@ export const getCityList = () => {
     method: 'get'
   })
 }
+
+export const getSocialSecurityDetail = (id) => {
+  return request({
+    url: `/social_securitys/${id}`,
+    method: 'get'
+  })
+}
