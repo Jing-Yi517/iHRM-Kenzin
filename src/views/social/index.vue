@@ -3,7 +3,7 @@
     <div class="app-container">
       <el-card class="social-card">
         <el-button type="danger">历史归档</el-button>
-        <el-button type="primary">报表</el-button>
+        <el-button type="primary" @click="jumpToReport">{{ socialSecuritySettings.dataMonth }}报表</el-button>
       </el-card>
       <el-card class="social-card">
         <el-form label-position="right" label-width="100px">
@@ -57,7 +57,7 @@
 </template>
 
 <script>
-import { getCityList, getSocialSecurityList } from '@/api/social'
+import { getCityList, getSocialSecurityList, getSocialSecuritySettings } from '@/api/social'
 import { getDepartmentInfo } from '@/api/department'
 export default {
   name: 'Social',
@@ -70,6 +70,7 @@ export default {
       selectedDepartment: [],
       tableData: [],
       isTableLoading: false,
+      socialSecuritySettings: {},
       pagination: {
         page: 1,
         pageSize: 10,
@@ -97,7 +98,8 @@ export default {
   async created() {
     this.cityList = await getCityList()
     this.departmentList = await getDepartmentInfo()
-    this.getSocialList()
+    this.socialSecuritySettings = await getSocialSecuritySettings()
+    await this.getSocialList()
   },
   methods: {
     async getSocialList() {
@@ -120,6 +122,12 @@ export default {
     },
     handleTableRowClick(row) {
       this.$router.push(`/social/detail/${row.id}`)
+    },
+    jumpToReport() {
+      this.$router.push({
+        path: '/social/report',
+        query: { yearMonth: this.socialSecuritySettings.dataMonth }
+      })
     }
   }
 }

@@ -36,3 +36,10 @@ export const getSocialSecuritySettings = () => {
     method: 'get'
   })
 }
+
+export const getSocialSecurityReport = (yearMonth) => {
+  return request({
+    url: `/social_securitys/historys/${yearMonth}`,
+    method: 'get'
+  })
+}

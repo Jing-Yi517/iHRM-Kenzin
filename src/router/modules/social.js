@@ -19,6 +19,18 @@ export default {
       meta: {
         title: '社保详情' // 显示在导航的文本
       }
+    },
+    {
+      path: '/social/report',
+      component: () => import('@/views/social/report.vue'),
+      hidden: true, // 如果不想显示在菜单
+      meta: { title: '社保月份报表' }
+    },
+    {
+      path: '/social/archive',
+      component: () => import('@/views/social/archive.vue'),
+      hidden: true, // 如果不想显示在菜单
+      meta: { title: '社保历史报表' }
     }
   ]
 }
