@@ -21,3 +21,18 @@ export const getSocialSecurityDetail = (id) => {
     method: 'get'
   })
 }
+
+export const updateSocialSecurityDetail = (id, data) => {
+  return request({
+    url: `/social_securitys/${id}`,
+    method: 'put',
+    data
+  })
+}
+
+export const getSocialSecuritySettings = () => {
+  return request({
+    url: '/social_securitys/settings',
+    method: 'get'
+  })
+}

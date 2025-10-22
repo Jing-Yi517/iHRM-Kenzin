@@ -62,24 +62,43 @@
 
       <!-- 表单区域 -->
       <el-card class="form-container">
-        <el-form :model="formData" label-width="120px" label-position="right" class="main-form">
+        <el-form
+          ref="formRef"
+          :model="formData"
+          :rules="formRules"
+          label-width="120px"
+          label-position="right"
+          class="main-form"
+        >
 
           <!-- 社保信息 -->
-          <el-form-item label="参保城市">
-            <el-select v-model="formData.participatingInTheCityId" size="mini" placeholder="请选择参保城市">
+          <el-form-item label="参保城市" prop="participatingInTheCityId">
+            <el-select
+              v-model="formData.participatingInTheCityId"
+              size="mini"
+              placeholder="请选择参保城市"
+            >
               <el-option v-for="item in cityList" :key="item.id" :label="item.name" :value="item.id" />
             </el-select>
           </el-form-item>
 
-          <el-form-item label="参保类型">
-            <el-select v-model="formData.socialSecurityType" size="mini" placeholder="请选择参保类型">
+          <el-form-item label="参保类型" prop="socialSecurityType">
+            <el-select
+              v-model="formData.socialSecurityType"
+              size="mini"
+              placeholder="请选择参保类型"
+            >
               <el-option label="首次开户" :value="1" />
               <el-option label="非首次开户" :value="2" />
             </el-select>
           </el-form-item>
 
-          <el-form-item label="户籍类型">
-            <el-select v-model="formData.householdRegistrationType" size="mini" placeholder="请选择户籍类型">
+          <el-form-item label="户籍类型" prop="householdRegistrationType">
+            <el-select
+              v-model="formData.householdRegistrationType"
+              size="mini"
+              placeholder="请选择户籍类型"
+            >
               <el-option label="本市城镇" :value="1" />
               <el-option label="本市农村" :value="2" />
               <el-option label="外埠城镇" :value="3" />
@@ -87,12 +106,22 @@
             </el-select>
           </el-form-item>
 
-          <el-form-item label="社保基数">
-            <el-input v-model.number="formData.socialSecurityBase" size="mini" placeholder="请输入社保基数" />
+          <el-form-item label="社保基数" prop="socialSecurityBase">
+            <el-input
+              v-model.number="formData.socialSecurityBase"
+              size="mini"
+              placeholder="请输入社保基数"
+            />
+            （基数范围是3387 ~ 25401）
           </el-form-item>
 
-          <el-form-item label="工伤比例">
-            <el-input v-model.number="formData.industrialInjuryRatio" size="mini" placeholder="请输入工伤比例" />
+          <el-form-item label="工伤比例" prop="industrialInjuryRatio">
+            <el-input
+              v-model="formData.industrialInjuryRatio"
+              size="mini"
+              placeholder="请输入工伤比例"
+            />
+            （比例范围是0.2％ ~ 3％，推荐0.2％）
           </el-form-item>
 
           <!-- 社保缴纳 -->
@@ -139,22 +168,41 @@
           <el-divider />
 
           <!-- 公积金部分 -->
-          <el-form-item label="公积金城市">
-            <el-select v-model="formData.providentFundCityId" size="mini" placeholder="请选择城市">
+          <el-form-item label="公积金城市" prop="providentFundCityId">
+            <el-select
+              v-model="formData.providentFundCityId"
+              size="mini"
+              placeholder="请选择城市"
+            >
               <el-option v-for="item in cityList" :key="item.id" :label="item.name" :value="item.id" />
             </el-select>
           </el-form-item>
 
-          <el-form-item label="公积金基数">
-            <el-input v-model.number="formData.providentFundBase" size="mini" placeholder="请输入基数" />
+          <el-form-item label="公积金基数" prop="providentFundBase">
+            <el-input
+              v-model.number="formData.providentFundBase"
+              size="mini"
+              placeholder="请输入基数"
+            />
+            （基数范围是2273 ~ 25401）
           </el-form-item>
 
-          <el-form-item label="企业比例">
-            <el-input v-model.number="formData.enterpriseProportion" size="mini" placeholder="请输入企业比例" />
+          <el-form-item label="企业比例" prop="enterpriseProportion">
+            <el-input
+              v-model.number="formData.enterpriseProportion"
+              size="mini"
+              placeholder="请输入企业比例"
+            />
+            （比例范围是5％ ~ 12％，推荐12％ ）
           </el-form-item>
 
-          <el-form-item label="个人比例">
-            <el-input v-model.number="formData.personalProportion" size="mini" placeholder="请输入个人比例" />
+          <el-form-item label="个人比例" prop="personalProportion">
+            <el-input
+              v-model.number="formData.personalProportion"
+              size="mini"
+              placeholder="请输入个人比例"
+            />
+            （比例范围是5％ ~ 12％，推荐12％ ）
           </el-form-item>
 
           <!-- 公积金缴纳 -->
@@ -171,7 +219,7 @@
                   />
                 </el-form-item>
               </el-col>
-              <el-col :span="6">
+              <el-col :span="8">
                 <el-form-item label="公司" label-width="50px">
                   <el-input
                     v-model.number="formData.enterpriseProvidentFundPayment"
@@ -180,6 +228,7 @@
                     class="short-input"
                     @input="handleEnterpriseProvidentFundInput"
                   />
+                  （为自动测算结果，可手动调整）
                 </el-form-item>
               </el-col>
             </el-row>
@@ -200,10 +249,61 @@
 </template>
 
 <script>
-import { getSocialSecurityDetail, getCityList } from '@/api/social'
+import { getSocialSecurityDetail, getCityList, updateSocialSecurityDetail } from '@/api/social'
 
 export default {
   data() {
+    // 自定义校验规则
+    const validateSocialSecurityBase = (rule, value, callback) => {
+      if (!value && value !== 0) {
+        callback(new Error('社保基数不能为空'))
+      } else if (value < 3387 || value > 25401) {
+        callback(new Error('社保基数范围是3387 ~ 25401'))
+      } else {
+        callback()
+      }
+    }
+
+    const validateIndustrialInjuryRatio = (rule, value, callback) => {
+      if (!value && value !== 0) {
+        callback(new Error('工伤比例不能为空'))
+      } else if (value < 0.2 || value > 3) {
+        callback(new Error('工伤比例范围是0.2％ ~ 3％'))
+      } else {
+        callback()
+      }
+    }
+
+    const validateProvidentFundBase = (rule, value, callback) => {
+      if (!value && value !== 0) {
+        callback(new Error('公积金基数不能为空'))
+      } else if (value < 2273 || value > 25401) {
+        callback(new Error('公积金基数范围是2273 ~ 25401'))
+      } else {
+        callback()
+      }
+    }
+
+    const validateEnterpriseProportion = (rule, value, callback) => {
+      if (!value && value !== 0) {
+        callback(new Error('企业比例不能为空'))
+      } else if (value < 5 || value > 12) {
+        callback(new Error('企业比例范围是5％ ~ 12％'))
+      } else {
+        callback()
+      }
+    }
+
+    const validatePersonalProportion = (rule, value, callback) => {
+      if (!value && value !== 0) {
+        callback(new Error('个人比例不能为空'))
+      } else if (value < 5 || value > 12) {
+        callback(new Error('个人比例范围是5％ ~ 12％'))
+      } else {
+        callback()
+      }
+    }
+
     return {
       securityDetail: { user: {}, userSocialSecurity: {}},
       // 社保险种配置
@@ -234,9 +334,38 @@ export default {
         personalSocialSecurityPayment: 0, // 个人应交社保
         enterpriseSocialSecurityPayment: 0 // 企业应交社保
       },
+      // 表单校验规则
+      formRules: {
+        participatingInTheCityId: [
+          { required: true, message: '请选择参保城市', trigger: 'change' }
+        ],
+        socialSecurityType: [
+          { required: true, message: '请选择参保类型', trigger: 'change' }
+        ],
+        householdRegistrationType: [
+          { required: true, message: '请选择户籍类型', trigger: 'change' }
+        ],
+        socialSecurityBase: [
+          { required: true, validator: validateSocialSecurityBase, trigger: 'blur' }
+        ],
+        industrialInjuryRatio: [
+          { required: true, validator: validateIndustrialInjuryRatio, trigger: 'blur' }
+        ],
+        providentFundCityId: [
+          { required: true, message: '请选择公积金城市', trigger: 'change' }
+        ],
+        providentFundBase: [
+          { required: true, validator: validateProvidentFundBase, trigger: 'blur' }
+        ],
+        enterpriseProportion: [
+          { required: true, validator: validateEnterpriseProportion, trigger: 'blur' }
+        ],
+        personalProportion: [
+          { required: true, validator: validatePersonalProportion, trigger: 'blur' }
+        ]
+      },
       cityList: [],
       // 标记是否手动输入了公积金缴纳金额
-
       isManualProvidentFundInput: {
         personal: false,
         enterprise: false
@@ -335,7 +464,6 @@ export default {
 
     formData: {
       handler(newVal) {
-        console.log('表单数据变化:', JSON.parse(JSON.stringify(newVal)))
       },
       deep: true,
       immediate: true
@@ -345,11 +473,9 @@ export default {
     // 获取接口数据
     const res = await getSocialSecurityDetail(this.$route.params.id)
     this.securityDetail = res
-    console.log('API返回完整数据:', res)
 
     // 确保响应式初始化
     const ss = res.userSocialSecurity || {}
-    console.log('社保详情数据:', ss)
 
     // 初始化比例记录
     this.lastProportions.enterprise = Number(ss.enterpriseProportion) || 0
@@ -378,10 +504,7 @@ export default {
       enterpriseSocialSecurityPayment: ss.enterpriseSocialSecurityPayment || 0
     })
 
-    console.log('合并后的formData:', this.formData)
-
     this.cityList = await getCityList()
-    console.log('城市列表:', this.cityList)
   },
   methods: {
     // 计算公积金缴纳金额
@@ -411,10 +534,43 @@ export default {
       this.formData.enterpriseProvidentFundPayment = Number(value) || 0
     },
 
-    handleSubmit() {
-      console.log('提交数据:', this.formData)
-      console.log('社保表格数据:', this.insuranceTable)
-      // 这里添加提交逻辑
+    async handleSubmit() {
+      try {
+        await this.$refs.formRef.validate()
+        const submitData = {
+          userId: this.securityDetail.user.id,
+          enterprisesPaySocialSecurityThisMonth: this.formData.enterprisesPaySocialSecurityThisMonth,
+          enterprisesPayTheProvidentFundThisMonth: this.formData.enterprisesPayTheProvidentFundThisMonth,
+          participatingInTheCityId: this.formData.participatingInTheCityId,
+          socialSecurityType: this.formData.socialSecurityType,
+          householdRegistrationType: this.formData.householdRegistrationType,
+          socialSecurityBase: this.formData.socialSecurityBase,
+          industrialInjuryRatio: this.formData.industrialInjuryRatio,
+          socialSecurityNotes: this.formData.socialSecurityNotes,
+          providentFundCityId: this.formData.providentFundCityId,
+          enterpriseProportion: this.formData.enterpriseProportion,
+          personalProportion: this.formData.personalProportion,
+          enterpriseProvidentFundPayment: this.formData.enterpriseProvidentFundPayment,
+          personalProvidentFundPayment: this.formData.personalProvidentFundPayment,
+          providentFundNotes: this.formData.providentFundNotes,
+          lastModifyTime: new Date().toISOString(),
+          socialSecuritySwitchUpdateTime: new Date().toISOString(),
+          providentFundSwitchUpdateTime: new Date().toISOString(),
+          // 其他必需字段
+          householdRegistration: null,
+          participatingInTheCity: this.cityList.find(item => item.id === this.formData.participatingInTheCityId)?.name || '',
+          providentFundCity: this.cityList.find(item => item.id === this.formData.providentFundCityId)?.name || ''
+        }
+        const res = await updateSocialSecurityDetail(this.$route.params.id, submitData)
+        console.log(res)
+        this.$message({
+          type: 'success',
+          message: '更新员工社保详情成功'
+        })
+        this.$router.push('/social')
+      } catch (err) {
+        console.log(err)
+      }
     },
     handleCancel() {
       this.$router.back()
