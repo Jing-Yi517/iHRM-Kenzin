@@ -39,7 +39,29 @@ export const getSocialSecuritySettings = () => {
 
 export const getSocialSecurityReport = (yearMonth) => {
   return request({
-    url: `/social_securitys/historys/${yearMonth}`,
+    url: `/social_securitys/historys/${yearMonth}?opType=1`,
     method: 'get'
+  })
+}
+
+export const exportSocialSecurityReportExcel = (yearMonth) => {
+  return request({
+    url: `/social_securitys/historys/${yearMonth}/export`,
+    method: 'get',
+    responseType: 'blob'
+  })
+}
+
+export const archiveSocialSecurityReport = (yearMonth) => {
+  return request({
+    url: `/social_securitys/historys/${yearMonth}/archive`,
+    method: 'post'
+  })
+}
+
+export const createSocialSecurityReport = (yearMonth) => {
+  return request({
+    url: `/social_securitys/historys/${yearMonth}/newReport`,
+    method: 'put'
   })
 }
