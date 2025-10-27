@@ -65,3 +65,10 @@ export const createSocialSecurityReport = (yearMonth) => {
     method: 'put'
   })
 }
+
+export const archiveSocialSecurityReportHistory = (year) => {
+  return request({
+    url: `/social_securitys/historys/${year}/list`,
+    method: 'get'
+  })
+}

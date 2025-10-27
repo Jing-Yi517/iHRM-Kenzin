@@ -2,7 +2,7 @@
   <div class="container">
     <div class="app-container">
       <el-card class="social-card">
-        <el-button type="danger">历史归档</el-button>
+        <el-button type="danger" @click="$router.push('/social/archive')">历史归档</el-button>
         <el-button type="primary" @click="jumpToReport">{{ socialSecuritySettings.dataMonth }}报表</el-button>
       </el-card>
       <el-card class="social-card">
