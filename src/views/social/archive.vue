@@ -2,6 +2,7 @@
   <div class="container">
     <div class="app-container">
       <el-card class="main-card">
+        <!-- 年份选择 -->
         <template #header>
           <el-row type="flex" justify="space-between" align="middle">
             <h2>归档社保报表</h2>
@@ -14,44 +15,46 @@
           </el-row>
         </template>
 
-        <!-- 内部内容 -->
-        <el-card>
-          <template #header v-if="totalData.length">
-            <el-row type="flex" align="middle">
-              <el-col :span="3" style="height: 80px;" class="years-month">
+        <!-- 循环渲染每个月报表 -->
+        <el-card
+          v-for="(item, index) in totalData"
+          :key="item.yearsMonth"
+          class="month-card"
+          style="margin-bottom: 10px;"
+        >
+          <template #header>
+            <el-row type="flex" align="middle" @click.native="toggleExtend(index)" class="clickable-row">
+              <el-col :span="3" class="years-month">
                 <div>
                   <span class="arrow">→</span>
                   <span>社保报表</span>
-                  <span class="text">{{ totalData[0]?.yearsMonth }}</span>
+                  <span class="text">{{ item.yearsMonth }}</span>
                 </div>
               </el-col>
-              <el-col :span="3" style="height: 55px;" class="archive-stats">
+              <el-col :span="3" class="archive-stats">
                 <div>
                   <span>企业缴纳</span>
-                  {{ totalData[0]?.enterprisePayment }}
+                  {{ item.enterprisePayment }}
                 </div>
               </el-col>
-              <el-col :span="3" style="height: 55px;" class="archive-stats">
+              <el-col :span="3" class="archive-stats">
                 <div>
                   <span>个人缴纳</span>
-                  {{ totalData[0]?.personalPayment }}
+                  {{ item.personalPayment }}
                 </div>
               </el-col>
-              <el-col :span="3" style="height: 55px;" class="archive-stats">
+              <el-col :span="3" class="archive-stats">
                 <div>
                   <span>合计</span>
-                  {{ totalData[0]?.total }}
+                  {{ item.total }}
                 </div>
               </el-col>
             </el-row>
           </template>
 
-          <!-- 表格或空提示 -->
-          <div v-if="tableData.length">
-            <ReportTable :data="tableData" />
-          </div>
-          <div v-else class="no-data">
-            <p>该年份暂无数据</p>
+          <!-- 表格内容 -->
+          <div v-if="isExtended[index]">
+            <ReportTable :data="tableData[index]" :height="300"/>
           </div>
         </el-card>
       </el-card>
@@ -61,30 +64,65 @@
 
 <script>
 import { archiveSocialSecurityReportHistory, getSocialSecurityReport } from '@/api/social'
-import ReportTable from './components/ReportTable.vue';
+import ReportTable from './components/ReportTable.vue'
 
 export default {
   name: 'SocialArchive',
-  components:{ReportTable},
+  components: { ReportTable },
   data() {
     return {
-      selectedYear: '', // 当前选择的年份
-      totalData: [],
-      tableData: []  // 新增表格数据
+      selectedYear: '',          // 当前选择的年份
+      totalData: [],             // 月份总数据
+      tableData: [],             // 每个月的表格数据，数组
+      isExtended: []             // 每个月展开状态，布尔数组
     }
   },
   methods: {
+    // 年份选择变化
     async handleYearChange(date) {
-      const year = date.getFullYear() // 只取年份数字
+      if (!date) return // 处理清空日期的情况
+      
+      const year = date.getFullYear()
       try {
         const res = await archiveSocialSecurityReportHistory(year)
         this.totalData = res
-        if (this.totalData.length > 0) {
-          const tableRes = await getSocialSecurityReport(this.totalData[0].yearsMonth)
-          this.tableData = tableRes
+        // 创建新数组而不是填充现有数组
+        this.isExtended = res.map(() => false)
+        this.tableData = res.map(() => [])
+
+        // 可选：提前加载第一个月表格
+        if (res.length > 0) {
+          this.fetchTableData(0)
         }
       } catch (err) {
         console.error('请求出错:', err)
+        this.$message.error('获取社保报表历史数据失败')
+      }
+    },
+
+    // 点击展开/收起
+    toggleExtend(index) {
+      // 使用Vue.set更新数组元素以确保响应性
+      this.$set(this.isExtended, index, !this.isExtended[index])
+
+      // 第一次展开时请求表格数据
+      if (this.isExtended[index] && (!this.tableData[index] || this.tableData[index].length === 0)) {
+        this.fetchTableData(index)
+      }
+    },
+    
+    // 获取表格数据
+    async fetchTableData(index) {
+      if (index < 0 || index >= this.totalData.length) return
+      
+      try {
+        const month = this.totalData[index].yearsMonth
+        const res = await getSocialSecurityReport(month)
+        // 使用Vue.set更新表格数据以确保响应性
+        this.$set(this.tableData, index, res)
+      } catch (err) {
+        console.error('请求表格数据出错:', err)
+        this.$message.error('获取社保报表详情失败')
       }
     }
   }
@@ -92,36 +130,42 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-:deep(.main-card .el-card__body){
+:deep(.main-card .el-card__body) {
   padding: 0;
 }
-.main-card{
-  .years-month{
+
+.main-card {
+  .years-month {
     border-right: 2px solid #ccc;
-    .text{
-      color:#999;
+    .text {
+      color: #999;
       margin-left: 10px;
     }
-    .arrow{
+    .arrow {
       font-size: 22px;
       line-height: 80px;
       margin-right: 10px;
     }
   }
-  .archive-stats{
+
+  .archive-stats {
     font-size: 22px;
     display: flex;
     justify-content: center;
     align-items: center;
-    span{
+    span {
       font-size: 14px;
       display: block;
-      color:#999;
+      color: #999;
       margin-bottom: 5px;
     }
-    &:nth-child(-n+3){
+    &:nth-child(-n + 3) {
       border-right: 2px solid #ccc;
     }
+  }
+
+  .clickable-row {
+    cursor: pointer;
   }
 }
 </style>

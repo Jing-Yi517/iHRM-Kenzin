@@ -3,6 +3,7 @@
     :data="data"
     border
     style="width: 100%;"
+    :height="height"
   >
 
     <el-table-column label="序号" prop="userId" width="180" fixed="left" />
@@ -102,6 +103,10 @@ export default {
     data: {
       type: Array,
       required: true
+    },
+    height:{
+      type:Number,
+      default: 1000
     }
   }
 }
