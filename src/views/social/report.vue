@@ -38,6 +38,9 @@ export default {
     console.log(res)
   },
   methods: {
+    /**
+     * ? 导出当前社保报表数据
+     */
     async handleExportExcel() {
       const loading = this.$loading({
         lock: true,
@@ -55,6 +58,9 @@ export default {
       loading.close()
     },
 
+    /**
+     * ? 归档当前社保数据
+     */
     async handleArchiveReport() {
       this.$confirm(`是否确定归档 ${this.$route.query.yearMonth} 报表？ 该操作会覆盖上一次的归档记录`, '提示', {
         confirmButtonText: '确定',
@@ -66,6 +72,9 @@ export default {
       }).catch(() => {})
     },
 
+    /**
+     * ? 新建社保报表数据
+     */
     handleCreateReport() {
       // 原始年月
       const year = Number(this.$route.query.yearMonth.slice(0, 4))

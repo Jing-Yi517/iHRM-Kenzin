@@ -23,7 +23,7 @@
           style="margin-bottom: 10px;"
         >
           <template #header>
-            <el-row type="flex" align="middle" @click.native="toggleExtend(index)" class="clickable-row">
+            <el-row type="flex" align="middle" class="clickable-row" @click.native="toggleExtend(index)">
               <el-col :span="3" class="years-month">
                 <div>
                   <span class="arrow">→</span>
@@ -54,7 +54,7 @@
 
           <!-- 表格内容 -->
           <div v-if="isExtended[index]">
-            <ReportTable :data="tableData[index]" :height="300"/>
+            <ReportTable :data="tableData[index]" :height="300" />
           </div>
         </el-card>
       </el-card>
@@ -71,18 +71,21 @@ export default {
   components: { ReportTable },
   data() {
     return {
-      selectedYear: '',          // 当前选择的年份
-      totalData: [],             // 月份总数据
-      tableData: [],             // 每个月的表格数据，数组
-      isExtended: []             // 每个月展开状态，布尔数组
+      selectedYear: '', // 当前选择的年份
+      totalData: [], // 月份总数据
+      tableData: [], // 每个月的表格数据，数组
+      isExtended: [] // 每个月展开状态，布尔数组
     }
   },
   methods: {
-    // 年份选择变化
+    /**
+     * ? 监听年份变化，查找不同的年份社保报表数据
+     * @param date date-picker返回的 Date对象
+     */
     async handleYearChange(date) {
       if (!date) return // 处理清空日期的情况
-      
-      const year = date.getFullYear()
+
+      const year = date.getFullYear() // 只获取年份数据
       try {
         const res = await archiveSocialSecurityReportHistory(year)
         this.totalData = res
@@ -90,7 +93,7 @@ export default {
         this.isExtended = res.map(() => false)
         this.tableData = res.map(() => [])
 
-        // 可选：提前加载第一个月表格
+        // 提前加载第一个月表格
         if (res.length > 0) {
           this.fetchTableData(0)
         }
@@ -100,9 +103,12 @@ export default {
       }
     },
 
-    // 点击展开/收起
+    /**
+     * ? 自定义点击事件，点击card获取并展开相应table数据
+     * @param index
+     */
     toggleExtend(index) {
-      // 使用Vue.set更新数组元素以确保响应性
+      // 使用Vue.set更新数组元素以确保响应性 Vue2监听不到数组内部的变化...
       this.$set(this.isExtended, index, !this.isExtended[index])
 
       // 第一次展开时请求表格数据
@@ -110,11 +116,15 @@ export default {
         this.fetchTableData(index)
       }
     },
-    
-    // 获取表格数据
+
+    /**
+     * ? 获取对应月份的 社保报表 表格数据
+     * @param index v-for内部的 index
+     * * 通过index去 totalData数据内获取对应的年份/月份数据 以发送对应的请求
+     */
     async fetchTableData(index) {
       if (index < 0 || index >= this.totalData.length) return
-      
+
       try {
         const month = this.totalData[index].yearsMonth
         const res = await getSocialSecurityReport(month)

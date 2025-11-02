@@ -63,15 +63,15 @@ export default {
   name: 'Social',
   data() {
     return {
-      cityList: [],
-      departmentList: [],
-      selectedSocialCity: [],
-      selectedHousingCity: [],
-      selectedDepartment: [],
-      tableData: [],
-      isTableLoading: false,
-      socialSecuritySettings: {},
-      pagination: {
+      cityList: [], // 城市列表
+      departmentList: [], // 部门列表
+      selectedSocialCity: [], // 当前选中的社保城市
+      selectedHousingCity: [], // 当前选择的公积金城市
+      selectedDepartment: [], // 当前选择的部门
+      tableData: [], // 员工社保表格
+      isTableLoading: false, // 是否正在加载table
+      socialSecuritySettings: {}, // 获取社保设置（当前归档情况等）
+      pagination: { // 分页设置
         page: 1,
         pageSize: 10,
         total: 10
@@ -102,6 +102,10 @@ export default {
     await this.getSocialList()
   },
   methods: {
+    /**
+     * ? 获取员工社保表格数据
+     * * 根据是否选中了公积金/社保城市，部门，进行一个精确查找
+     */
     async getSocialList() {
       const data = {
         page: this.pagination.page,
@@ -116,13 +120,27 @@ export default {
       this.pagination.total = res.total
       this.isTableLoading = false
     },
+
+    /**
+     * ? 监听页码变化，发送新请求
+     * @param page 分页数据
+     */
     async handlePageChange(page) {
       this.pagination.page = page
       await this.getSocialList()
     },
+
+    /**
+     * ? 点击表格行跳转员工社保详情逻辑
+     * @param row 表格行数据
+     */
     handleTableRowClick(row) {
       this.$router.push(`/social/detail/${row.id}`)
     },
+
+    /**
+     *  ? 跳转社保报表页面逻辑
+     */
     jumpToReport() {
       this.$router.push({
         path: '/social/report',
