@@ -4,7 +4,7 @@
       <el-card>
         <el-row type="flex">
           <el-button type="danger">设置</el-button>
-          <el-button type="primary">报表</el-button>
+          <el-button type="primary">{{ companySettings.dataMonth }}报表</el-button>
         </el-row>
       </el-card>
       <el-card>
@@ -40,8 +40,25 @@
           <el-table-column label="工资基数" prop="currentBasicSalary" />
           <el-table-column label="津贴方案" prop="subsidyName" />
           <el-table-column label="操作">
-            <template>
-              <el-button type="primary" size="mini">调薪</el-button>
+            <template v-slot="scope">
+              <el-button
+                v-if="scope.row.currentBasicSalary === null"
+                size="mini"
+                type="danger"
+                @click="handleModifySalary(1, scope)"
+              >
+                定薪
+              </el-button>
+
+              <el-button
+                v-else
+                size="mini"
+                type="primary"
+                @click="handleModifySalary(2, scope)"
+              >
+                调薪
+              </el-button>
+
               <el-button size="mini">查看</el-button>
             </template>
           </el-table-column>
@@ -50,15 +67,19 @@
           <el-pagination layout="prev,pager,next,total" :total="pagination.total" :page-size="pagination.pageSize" :current-page="pagination.page" @current-change="handlePageChange" />
         </el-row>
       </el-card>
+      <SalaryJustifyDialog :is-dialog-visible="isDialogVisible" :is-init-salary="isInitSalary" :user-id="currentUserId" @dialogClose="handleDialogClose" @justifySuccess="getSalaryList()" />
     </div>
   </div>
 </template>
 
 <script>
 import { getDepartmentInfo } from '@/api/department'
-import { getSalaryList } from '@/api/salary'
+import { getSalaryList, getCompanySettings } from '@/api/salary'
+import SalaryJustifyDialog from './components/SalaryJustifyDialog.vue'
+
 export default {
   name: 'Salary',
+  components: { SalaryJustifyDialog },
   data() {
     return {
       departmentList: [],
@@ -70,7 +91,11 @@ export default {
         total: 0
       },
       tableData: [],
-      isTableLoading: false
+      isTableLoading: false,
+      companySettings: {},
+      isDialogVisible: false,
+      isInitSalary: false,
+      currentUserId: 0
     }
   },
   watch: {
@@ -85,6 +110,7 @@ export default {
   },
   async created() {
     this.departmentList = await getDepartmentInfo()
+    this.companySettings = await getCompanySettings()
     this.getSalaryList()
   },
   methods: {
@@ -103,9 +129,22 @@ export default {
     handlePageChange(page) {
       this.pagination.page = page
       this.getSalaryList()
+    },
+    handleModifySalary(type, scope) {
+      this.currentUserId = +scope.row.id
+      console.log(this.currentUserId)
+      if (type === 1) {
+        this.isInitSalary = true
+        this.isDialogVisible = true
+      } else {
+        this.isInitSalary = false
+        this.isDialogVisible = true
+      }
+    },
+    handleDialogClose() {
+      this.isDialogVisible = false
     }
   }
-
 }
 </script>
 
