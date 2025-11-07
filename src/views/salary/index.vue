@@ -3,8 +3,8 @@
     <div class="app-container">
       <el-card>
         <el-row type="flex">
-          <el-button type="danger">设置</el-button>
-          <el-button type="primary">{{ companySettings.dataMonth }}报表</el-button>
+          <el-button type="danger" @click="$router.push('/salary/setting')">设置</el-button>
+          <el-button type="primary" @click="$router.push(`/salary/report/${companySettings.dataMonth}`)">{{ companySettings.dataMonth }}报表</el-button>
         </el-row>
       </el-card>
       <el-card>
