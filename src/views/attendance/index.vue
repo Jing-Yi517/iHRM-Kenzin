@@ -71,7 +71,7 @@
                   slot="reference"
                   :type="getTagType(scope.row.attendanceRecord[index]?.adtStatu)"
                   class="attendance-tag"
-                  @click="isModifyDialogVisible = true"
+                  @click="openModifyDialog(scope.row.attendanceRecord[index])"
                 >
                   {{ getAttendanceStatus(scope.row.attendanceRecord[index]?.adtStatu) }}
                 </el-tag>
@@ -84,7 +84,7 @@
         </el-row>
       </el-card>
 
-      <AttendanceModifyDialog :is-modify-dialog-visible="isModifyDialogVisible" @closeDialog="isModifyDialogVisible=false" />
+      <AttendanceModifyDialog :is-modify-dialog-visible="isModifyDialogVisible" :record="currentModifyRecord" @closeDialog="isModifyDialogVisible=false" @success-modify="getAttendanceList" />
       <AttendanceSettingDialog :is-setting-dialog-visible="isSettingDialogVisible" @closeDialog="isSettingDialogVisible=false" />
     </div>
   </div>
@@ -110,7 +110,8 @@ export default {
       },
       isTableLoading: false,
       isModifyDialogVisible: false,
-      isSettingDialogVisible: false
+      isSettingDialogVisible: false,
+      currentModifyRecord: {}
     }
   },
   watch: {
@@ -134,7 +135,7 @@ export default {
         page: this.pagination.page,
         pagesize: this.pagination.pagesize
       })
-      console.log(res)
+
       this.isTableLoading = false
       this.pagination.total = res.data.total
       this.tableData = res.data.rows
@@ -197,6 +198,12 @@ export default {
       if (status >= 7 || status === 22 || status === 5 || status === 6) return 'info'
 
       return 'info'
+    },
+
+    openModifyDialog(attendanceRecord) {
+      this.currentModifyRecord = attendanceRecord
+      console.log(this.currentModifyRecord)
+      this.isModifyDialogVisible = true
     }
   }
 }

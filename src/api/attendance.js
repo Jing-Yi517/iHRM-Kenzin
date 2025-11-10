@@ -7,3 +7,11 @@ export const getAttendanceList = (params) => {
     params
   })
 }
+
+export const modifyEmployeeAttendanceRecord = (id, data) => {
+  return request({
+    url: `/attendances/${id}`,
+    method: 'put',
+    data
+  })
+}

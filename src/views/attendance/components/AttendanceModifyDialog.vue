@@ -1,7 +1,7 @@
 <template>
   <el-dialog :visible="isModifyDialogVisible" width="800px" @close="handleDialogClose">
     <template slot="title">
-      <el-row type="flex" justify="center">xx/xx(实际工作日考勤方案)</el-row>
+      <el-row type="flex" justify="center">{{ record.day }}(实际工作日考勤方案)</el-row>
     </template>
 
     <el-row>
@@ -10,7 +10,7 @@
     <el-form>
       <el-form-item label="考勤状态">
         <el-radio-group v-model="selectedStatus">
-          <el-radio v-for="(label, value) in statusMap" :key="value" :label="value">
+          <el-radio v-for="(label, value) in statusMap" :key="value" :label="Number(value)">
             {{ label }}
           </el-radio>
         </el-radio-group>
@@ -18,28 +18,28 @@
     </el-form>
 
     <el-row type="flex" justify="center">
-      <el-button type="primary" @click="submitStatus">确定</el-button>
+      <el-button type="primary" @click="submitModify">确定</el-button>
       <el-button @click="handleDialogClose">取消</el-button>
     </el-row>
   </el-dialog>
 </template>
 
 <script>
+import { modifyEmployeeAttendanceRecord } from '@/api/attendance'
 export default {
   props: {
     isModifyDialogVisible: {
       type: Boolean,
       default: false
     },
-
-    defaultStatus: { // 外部传入当前考勤状态
-      type: Number,
-      default: null
+    record: {
+      type: Object,
+      required: true
     }
   },
   data() {
     return {
-      selectedStatus: this.defaultStatus, // 双向绑定到 radio
+      selectedStatus: null, // 双向绑定到 radio
       statusMap: {
         1: '正常',
         2: '旷工',
@@ -66,13 +66,23 @@ export default {
       }
     }
   },
+  watch: {
+    isModifyDialogVisible(val) {
+      if (val) {
+        this.selectedStatus = this.record?.adtStatu ?? null
+      }
+    }
+  },
   methods: {
     handleDialogClose() {
       this.$emit('closeDialog')
     },
 
-    submitStatus() {
-      this.$emit('submitStatus', this.selectedStatus)
+    async submitModify() {
+      await modifyEmployeeAttendanceRecord(this.record.id, { userId: this.record.userId, day: this.record.day, adtStatu: this.selectedStatus, departmentId: this.record.departmentId })
+      this.$message({ type: 'success', message: '更新成功' })
+      this.$emit('success-modify')
+      this.$emit('closeDialog')
     }
   }
 }
