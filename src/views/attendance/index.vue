@@ -202,7 +202,6 @@ export default {
 
     openModifyDialog(attendanceRecord) {
       this.currentModifyRecord = attendanceRecord
-      console.log(this.currentModifyRecord)
       this.isModifyDialogVisible = true
     }
   }

@@ -15,3 +15,31 @@ export const modifyEmployeeAttendanceRecord = (id, data) => {
     data
   })
 }
+
+export const getLeaveSetting = (departmentId) => {
+  return request({
+    url: `/cfg/leave/list`,
+    method: 'get',
+    params: {
+      departmentId
+    }
+  })
+}
+
+export const getAttendanceSetting = (departmentId) => {
+  return request({
+    url: `/cfg/atte/item`,
+    method: 'get',
+    params: {
+      departmentId
+    }
+  })
+}
+
+export const updateAttendanceSetting = (data) => {
+  return request({
+    url: `/cfg/atte`,
+    method: 'put',
+    data
+  })
+}
