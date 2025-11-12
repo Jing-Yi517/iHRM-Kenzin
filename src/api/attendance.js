@@ -43,3 +43,11 @@ export const updateAttendanceSetting = (data) => {
     data
   })
 }
+
+export const updateLeaveSetting = (data) => {
+  return request({
+    url: `/cfg/leave`,
+    method: 'post',
+    data
+  })
+}

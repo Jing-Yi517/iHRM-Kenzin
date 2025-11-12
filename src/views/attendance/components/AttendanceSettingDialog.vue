@@ -61,7 +61,7 @@
       <el-tab-pane label="请假设置" name="leave">
         <el-form>
           <el-form-item label="部门">
-            <el-select v-model="attendanceSettingForm.departmentId">
+            <el-select v-model="leaveSettingForm.departmentId">
               <el-option
                 v-for="item in departmentList"
                 :key="item.id"
@@ -70,9 +70,17 @@
               />
             </el-select>
           </el-form-item>
-          <el-table>
-            <el-table-column label="类型" width="100px " />
-            <el-table-column label="是否可用" width="200px" />
+          <el-table :data="leaveTypeList" border>
+            <el-table-column prop="name" label="类型" width="200" />
+            <el-table-column label="是否启用" width="200">
+              <template v-slot="{row}">
+                <el-switch
+                  v-model="row.isEnable"
+                  :active-value="1"
+                  :inactive-value="0"
+                />
+              </template>
+            </el-table-column>
           </el-table>
         </el-form>
       </el-tab-pane>
@@ -88,7 +96,7 @@
 </template>
 
 <script>
-import { getAttendanceSetting, updateAttendanceSetting } from '@/api/attendance'
+import { getAttendanceSetting, updateAttendanceSetting, getLeaveSetting, updateLeaveSetting } from '@/api/attendance'
 import { getDepartmentInfo } from '@/api/department'
 export default {
   props: {
@@ -108,18 +116,40 @@ export default {
         morningEndTime: null,
         afternoonStartTime: null,
         afternoonEndTime: null
-
-      }
+      },
+      leaveSettingForm: {
+        departmentId: 1
+      },
+      leaveTypeList: [
+        { name: '年假', leaveType: '60000', isEnable: 0 },
+        { name: '事假', leaveType: '60100', isEnable: 0 },
+        { name: '病假', leaveType: '60200', isEnable: 0 },
+        { name: '婚假', leaveType: '60300', isEnable: 0 },
+        { name: '丧假', leaveType: '60400', isEnable: 0 },
+        { name: '产假', leaveType: '60500', isEnable: 0 },
+        { name: '奖励产假', leaveType: '60600', isEnable: 0 },
+        { name: '陪产假', leaveType: '60700', isEnable: 0 },
+        { name: '探亲假', leaveType: '60800', isEnable: 0 },
+        { name: '工伤假', leaveType: '60900', isEnable: 0 },
+        { name: '调休假', leaveType: '61000', isEnable: 0 },
+        { name: '产检假', leaveType: '61100', isEnable: 0 },
+        { name: '流产假', leaveType: '61200', isEnable: 0 },
+        { name: '长期病假', leaveType: '61300', isEnable: 0 }
+      ]
     }
   },
   watch: {
     'attendanceSettingForm.departmentId'(newVal, oldVal) {
       this.getDepartmentAttendanceSetting(newVal)
+    },
+    'leaveSettingForm.departmentId'(newVal) {
+      this.getDepartmentLeaveSetting(newVal)
     }
   },
   async created() {
     this.departmentList = await getDepartmentInfo()
     this.getDepartmentAttendanceSetting(1)
+    this.getDepartmentLeaveSetting(1)
   },
   methods: {
     handleDialogClose() {
@@ -140,12 +170,38 @@ export default {
       })
       this.$emit('closeDialog')
     },
+    async getDepartmentLeaveSetting(departmentId) {
+      const res = await getLeaveSetting(departmentId)
+      console.log(res)
+      this.leaveTypeList.forEach(item => {
+        const match = res.find(r => r.leaveType === item.leaveType)
+        item.isEnable = match ? match.isEnable : 0
+      })
+    },
+
+    async updateDepartmentLeaveSetting() {
+      const leaveTypeListWithDepartmentId = this.leaveTypeList.map(item => ({
+        ...item,
+        departmentId: this.leaveSettingForm.departmentId
+      }))
+
+      await updateLeaveSetting(leaveTypeListWithDepartmentId)
+      this.$message({
+        type: 'success',
+        message: '更改请假设置成功'
+      })
+      this.$emit('closeDialog')
+    },
     async handleUpdate(activeTab) {
       if (activeTab === 'attendance') {
         this.updateDepartmentAttendanceSetting()
+      } else if (activeTab === 'leave') {
+        this.updateDepartmentLeaveSetting()
       }
     }
+
   }
+
 }
 </script>
 

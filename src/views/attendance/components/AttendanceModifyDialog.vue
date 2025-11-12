@@ -89,7 +89,7 @@ export default {
       const dynamic = {}
       res.forEach(item => {
         if (item.isEnable === 1) {
-          const smallStatus = this.leaveTypeToStatus[item.leaveType] // ✅ 大编码 → 小编码
+          const smallStatus = this.leaveTypeToStatus[item.leaveType] //  大编码 → 小编码
           if (smallStatus) {
             dynamic[smallStatus] = this.getStatusLabel(smallStatus)
           }
