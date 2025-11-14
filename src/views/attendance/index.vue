@@ -9,9 +9,9 @@
               <div class="stats">0</div>
             </div>
           </el-col>
-          <el-col :span="5" :offset="17">
-            <el-button size="mini">打卡范围</el-button>
-            <el-button size="mini">报表</el-button>
+          <el-col :span="4" :offset="18">
+
+            <el-button size="mini" @click="$router.push('/attendance/report')">报表</el-button>
             <el-button type="primary" size="mini" @click="isSettingDialogVisible=true">设置</el-button>
           </el-col>
         </el-row>
@@ -111,7 +111,8 @@ export default {
       isTableLoading: false,
       isModifyDialogVisible: false,
       isSettingDialogVisible: false,
-      currentModifyRecord: {}
+      currentModifyRecord: {},
+      yearMonth: ''
     }
   },
   watch: {

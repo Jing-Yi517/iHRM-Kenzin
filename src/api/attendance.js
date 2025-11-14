@@ -87,3 +87,13 @@ export const updatePunishSetting = (data) => {
     data
   })
 }
+
+export const archiveReport = (yearMonth) => {
+  return request({
+    url: '/attendances/archives',
+    method: 'get',
+    params: {
+      atteDate: yearMonth
+    }
+  })
+}

@@ -245,7 +245,7 @@
 
       <el-row type="flex" justify="center">
         <el-button type="primary" @click="handleUpdate(activeTab)">确认修改</el-button>
-        <el-button>取消</el-button>
+        <el-button @click="handleDialogClose">取消</el-button>
       </el-row>
 
     </el-tabs>
@@ -439,7 +439,6 @@ export default {
     async getDepartmentPunishSetting(departmentId = 1) {
       const res = await getPunishSetting(departmentId)
       this.punishSettingForm.rules = res
-      console.log(this.punishSettingForm)
     },
     async updateDepartmentPunishSetting() {
       await updatePunishSetting(this.punishSettingForm.rules)
