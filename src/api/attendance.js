@@ -36,6 +36,26 @@ export const getAttendanceSetting = (departmentId) => {
   })
 }
 
+export const getOvertimeSetting = (departmentId) => {
+  return request({
+    url: `/cfg/extDuty/item`,
+    method: 'get',
+    params: {
+      departmentId
+    }
+  })
+}
+
+export const getPunishSetting = (departmentId) => {
+  return request({
+    url: `/cfg/ded/list`,
+    method: 'get',
+    params: {
+      departmentId
+    }
+  })
+}
+
 export const updateAttendanceSetting = (data) => {
   return request({
     url: `/cfg/atte`,
@@ -47,6 +67,22 @@ export const updateAttendanceSetting = (data) => {
 export const updateLeaveSetting = (data) => {
   return request({
     url: `/cfg/leave`,
+    method: 'post',
+    data
+  })
+}
+
+export const updateOvertimeSetting = (data) => {
+  return request({
+    url: `/cfg/extDuty`,
+    method: 'put',
+    data
+  })
+}
+
+export const updatePunishSetting = (data) => {
+  return request({
+    url: `/cfg/deduction`,
     method: 'post',
     data
   })
