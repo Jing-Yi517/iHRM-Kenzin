@@ -59,7 +59,7 @@
                 调薪
               </el-button>
 
-              <el-button size="mini">查看</el-button>
+              <el-button size="mini" @click="$router.push(`/salary/detail/${scope.row.id}/${companySettings.dataMonth}`)">查看</el-button>
             </template>
           </el-table-column>
         </el-table>
